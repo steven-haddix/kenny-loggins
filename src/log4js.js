@@ -14,7 +14,7 @@
 
 /*jsl:option explicit*/
 
-var Logger = require('./logger');
+import Logger from './logger';
 
 /**
  * @fileoverview log4js is a library to log in JavaScript in similar manner 
@@ -45,40 +45,38 @@ var Logger = require('./logger');
  * @static
  * Website: http://stritti.github.io/log4js/
  */
-function Log4js() {
-	
-	/** 
-	 * Current version of log4js. 
-	 * @static
-	 * @final
-	 */
-  	this.version = "1.0.0";
+export default class Log4js {
+	constructor() {
+		/**
+		 * Current version of log4js.
+		 * @static
+		 * @final
+		 */
+		this.version = "1.0.0";
 
-	/**  
-	 * Date of logger initialized.
-	 * @static
-	 * @final
-	 */
-	this.applicationStartDate = new Date();
-		
-	/**  
-	 * Hashtable of loggers.
-	 * @static
-	 * @final
-	 * @private  
-	 */
-	this.loggers = {};
-}
+		/**
+		 * Date of logger initialized.
+		 * @static
+		 * @final
+		 */
+		this.applicationStartDate = new Date();
 
+		/**
+		 * Hashtable of loggers.
+		 * @static
+		 * @final
+		 * @private
+		 */
+		this.loggers = {};
+	}
 
-Log4js.prototype = {
 	/**
 	 * Get a logger instance. Instance is cached on categoryName level.
 	 * @param  {String} categoryName name of category to log to.
 	 * @return {Logger} instance of logger for the category
 	 * @static
 	 */
-	getLogger: function (categoryName) {
+	getLogger(categoryName) {
 		// Use default logger if categoryName is not specified or invalid
 		if (typeof categoryName != "string") {
 			categoryName = "[default]";
@@ -90,15 +88,15 @@ Log4js.prototype = {
 		}
 
 		return this.loggers[categoryName];
-	},
+	}
 	/**
 	 * Get the default logger instance.
 	 * @return {Logger} instance of default logger
 	 * @static
 	 */
-	getDefaultLogger: function () {
+	getDefaultLogger() {
 		return this.getLogger("[default]");
-	},
+	}
 	/**
 	 * Atatch an observer function to an elements event browser independent.
 	 *
@@ -107,13 +105,11 @@ Log4js.prototype = {
 	 * @param observer observer method to be called
 	 * @private
 	 */
-	attachEvent: function (element, name, observer) {
+	attachEvent(element, name, observer) {
 		if (element.addEventListener) { //DOM event model
 			element.addEventListener(name, observer, false);
 		} else if (element.attachEvent) { //M$ event model
 			element.attachEvent('on' + name, observer);
 		}
 	}
-};
-
-module.exports = Log4js;
+}

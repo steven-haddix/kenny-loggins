@@ -1,3 +1,7 @@
+var SimpleLayout = require('./simple');
+var Appender = require('../appender');
+var helper = require('../helper');
+
 /**
  * JS Alert Appender writes the logs to the JavaScript alert dialog box
  * @constructor
@@ -5,12 +9,11 @@
  * @param logger log4js instance this appender is attached to
  * @author S&eacute;bastien LECACHEUR
  */
-Log4js.JSAlertAppender = function() {
+ function JSAlertAppender() {
+	this.layout = new SimpleLayout();
+}
 
-	this.layout = new Log4js.SimpleLayout();
-};
-
-Log4js.JSAlertAppender.prototype = Log4js.extend(new Log4js.Appender(), /** @lends Log4js.JSAlertAppender# */ {
+JSAlertAppender.prototype = helper.extend(new Appender(), /** @lends Log4js.JSAlertAppender# */ {
 	/** 
 	 * @see Log4js.Appender#doAppend
 	 */
@@ -25,3 +28,5 @@ Log4js.JSAlertAppender.prototype = Log4js.extend(new Log4js.Appender(), /** @len
 	 	return "Log4js.JSAlertAppender"; 
 	 }	
 });
+
+module.exports = JSAlertAppender;

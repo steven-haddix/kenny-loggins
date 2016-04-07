@@ -1,6 +1,6 @@
 var Appender = require('../appender');
 var FifoBuffer = require('../fifoBuffer');
-var XMLLayout = require('../layouts/xml');
+var XMLLayout = require('./xml');
 var helper = require('../helper');
 
 /**

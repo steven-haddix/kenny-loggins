@@ -1,3 +1,7 @@
+var SimpleLayout = require('./simple');
+var Appender = require('../appender');
+var helper = require('../helper');
+
 /**
  * File Appender writing the logs to a text file.
  * PLEASE NOTE - Only works in IE and Mozilla 
@@ -12,9 +16,9 @@
  * @author Nicolas Justin njustin@idealx.com
  * @author Gregory Kokanosky gkokanosky@idealx.com
  */
-Log4js.FileAppender = function(file) {
+function FileAppender(file) {
 
-	this.layout = new Log4js.SimpleLayout();
+	this.layout = new SimpleLayout();
 	this.isIE = 'undefined';
 	
 	this.file = file || "log4js.log";	
@@ -33,7 +37,7 @@ Log4js.FileAppender = function(file) {
 	}
 };
 
-Log4js.FileAppender.prototype = Log4js.extend(new Log4js.Appender(), /** @lends Log4js.FileAppender# */ {  
+FileAppender.prototype = helper.extend(new Appender(), /** @lends Log4js.FileAppender# */ {
 	/**
 	 * @param loggingEvent event to be logged
 	 * @see Log4js.Appender#doAppend

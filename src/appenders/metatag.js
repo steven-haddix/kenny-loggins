@@ -1,3 +1,5 @@
+var Appender = require('../appender');
+var helper = require('../helper');
 /**
  * Metatag Appender writing the logs to meta tags
  *
@@ -6,10 +8,11 @@
  * @param logger log4js instance this appender is attached to
  * @author Stephan Strittmatter
  */
-Log4js.MetatagAppender = function() {
+function MetatagAppender() {
 	this.currentLine = 0;
-};
-Log4js.MetatagAppender.prototype = Log4js.extend(new Log4js.Appender(), /** @lends Log4js.MetatagAppender# */ {
+}
+
+MetatagAppender.prototype = helper.extend(new Appender(), /** @lends Log4js.MetatagAppender# */ {
 	/**
 	 * @param loggingEvent event to be logged
 	 * @see Log4js.Appender#doAppend
@@ -42,3 +45,5 @@ Log4js.MetatagAppender.prototype = Log4js.extend(new Log4js.Appender(), /** @len
 	 	return "Log4js.MetatagAppender"; 
 	 }
 });
+
+module.exports = MetatagAppender;

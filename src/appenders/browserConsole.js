@@ -1,3 +1,8 @@
+var SimpleLayout = require('../layouts/simple');
+import Appender from '../appender';
+var Level = require('../level');
+var helper = require('../helper');
+
 /**
  * Appender writes the logs to the JavaScript console of Mozilla browser
  * More infos: http://kb.mozillazine.org/index.php?title=JavaScript_Console&redirect=no
@@ -7,22 +12,20 @@
  * @param logger log4js instance this appender is attached to
  * @author Stephan Strittmatter
  */
-Log4js.MozillaJSConsoleAppender = function() {
-	this.layout = new Log4js.SimpleLayout();
-	try {
-		netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
-		this.jsConsole = Components.classes["@mozilla.org/consoleservice;1"].getService(Components.interfaces.nsIConsoleService);
-		this.scriptError = Components.classes["@mozilla.org/scripterror;1"].createInstance(Components.interfaces.nsIScriptError);
-	} catch (e) {
-		log4jsLogger && log4jsLogger.error(e);
+class MozillaJSConsoleAppender extends Appender {
+	constructor() {
+		super();
+		this.layout = new SimpleLayout();
+		try {
+			netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
+			this.jsConsole = Components.classes["@mozilla.org/consoleservice;1"].getService(Components.interfaces.nsIConsoleService);
+			this.scriptError = Components.classes["@mozilla.org/scripterror;1"].createInstance(Components.interfaces.nsIScriptError);
+		} catch (e) {
+			log4jsLogger && log4jsLogger.error(e);
+		}
 	}
-};
 
-Log4js.MozillaJSConsoleAppender.prototype = Log4js.extend(new Log4js.Appender(), /** @lends Log4js.MozillaJSConsoleAppender# */ {
-	/** 
-	 * @see Log4js.Appender#doAppend
-	 */
-	doAppend: function(loggingEvent) {
+	doAppend(loggingEvent) {
 		try {
 			netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
 			this.scriptError.init(this.layout.format(loggingEvent), null, null, null, null, this.getFlag(loggingEvent), loggingEvent.categoryName);
@@ -30,14 +33,14 @@ Log4js.MozillaJSConsoleAppender.prototype = Log4js.extend(new Log4js.Appender(),
 		} catch (e) {
 			log4jsLogger && log4jsLogger.error(e);
 		}
-	},
+	}
 	
 	/** 
 	 * toString
 	 */
-	 toString: function() {
+	 toString() {
 	 	return "Log4js.MozillaJSConsoleAppender"; 
-	 },
+	 }
 	 
 	/**
 	 * Map Log4js.Level to jsConsole Flags:
@@ -49,17 +52,16 @@ Log4js.MozillaJSConsoleAppender.prototype = Log4js.extend(new Log4js.Appender(),
 	 * </ul>
 	 * @private
 	 */	
-	getFlag: function(loggingEvent)
-	{
+	getFlag(loggingEvent) {
 		var retval;
 		switch (loggingEvent.level) {	
-			case Log4js.Level.FATAL:
+			case Level.FATAL:
 				retval = 2;//nsIScriptError.exceptionFlag = 2
 				break;
-			case Log4js.Level.ERROR:
+			case Level.ERROR:
 				retval = 0;//nsIScriptError.errorFlag
 				break;
-			case Log4js.Level.WARN:
+			case Level.WARN:
 				retval = 1;//nsIScriptError.warningFlag = 1
 				break;
 			default:
@@ -69,7 +71,7 @@ Log4js.MozillaJSConsoleAppender.prototype = Log4js.extend(new Log4js.Appender(),
 		
 		return retval;		
 	}
-});
+}
 
 /**
  * Appender writes the logs to the JavaScript console of Opera browser
@@ -79,25 +81,26 @@ Log4js.MozillaJSConsoleAppender.prototype = Log4js.extend(new Log4js.Appender(),
  * @param logger log4js instance this appender is attached to
  * @author Stephan Strittmatter
  */
-Log4js.OperaJSConsoleAppender = function() {
-	this.layout = new Log4js.SimpleLayout();
-};
+class OperaJSConsoleAppender extends Appender {
+	constructor() {
+		super();
+		this.layout = new SimpleLayout();
+	}
 
-Log4js.OperaJSConsoleAppender.prototype = Log4js.extend(new Log4js.Appender(), /** @lends Log4js.OperaJSConsoleAppender# */ {
-	/** 
+	/**
 	 * @see Log4js.Appender#doAppend
 	 */
-	doAppend: function(loggingEvent) {
+	doAppend(loggingEvent) {
 		opera.postError(this.layout.format(loggingEvent));
-	},
+	}
 	
 	/** 
 	 * toString
 	 */
-	 toString: function() {
+	 toString() {
 	 	return "Log4js.OperaJSConsoleAppender"; 
 	 }
-});
+}
 
 /**
  * Appender writes the logs to the JavaScript console of Safari browser
@@ -107,25 +110,26 @@ Log4js.OperaJSConsoleAppender.prototype = Log4js.extend(new Log4js.Appender(), /
  * @param logger log4js instance this appender is attached to
  * @author Stephan Strittmatter
  */
-Log4js.SafariJSConsoleAppender = function() {
-	this.layout = new Log4js.SimpleLayout();
-};
+class SafariJSConsoleAppender extends Appender {
+	constructor() {
+		super();
+		this.layout = new SimpleLayout();
+	}
 
-Log4js.SafariJSConsoleAppender.prototype = Log4js.extend(new Log4js.Appender(), /** @lends Log4js.SafariJSConsoleAppender# */ {
-	/** 
+	/**
 	 * @see Log4js.Appender#doAppend
 	 */
-	doAppend: function(loggingEvent) {
+	doAppend(loggingEvent) {
 		window.console.log(this.layout.format(loggingEvent));
-	},
+	}
 	
 	/** 
 	 * toString
 	 */
-	 toString: function() {
+	 toString() {
 	 	return "Log4js.SafariJSConsoleAppender"; 
 	 }
-});
+}
 
 /**
  * JavaScript Console Appender which is browser independent.
@@ -137,53 +141,55 @@ Log4js.SafariJSConsoleAppender.prototype = Log4js.extend(new Log4js.Appender(), 
  * @author Stephan Strittmatter
  * @since 1.0
  */
-Log4js.BrowserConsoleAppender = function() {
-	/**
-	 * Delegate for browser specific implementation
-	 * @type Log4js.Appender
-	 * @private
-	 */
-	this.consoleDelegate = null;
-	
-	if (window.console) {
-		this.consoleDelegate = new Log4js.SafariJSConsoleAppender(); 
-	}
-    else if (window.opera) {
-		this.consoleDelegate = new Log4js.OperaJSConsoleAppender(); 
-	}
-	else if(netscape) {
-		this.consoleDelegate = new Log4js.MozillaJSConsoleAppender(); 
-	}
-    else {
-       //@todo
-       log4jsLogger && log4jsLogger.error("Unsupported Browser");
-    }
-};
+export default class BrowserConsoleAppender extends Appender {
+	constructor() {
+		super();
+		/**
+		 * Delegate for browser specific implementation
+		 * @type Log4js.Appender
+		 * @private
+		 */
+		this.consoleDelegate = null;
 
-Log4js.BrowserConsoleAppender.prototype = Log4js.extend(new Log4js.Appender(), /** @lends Log4js.BrowserConsoleAppender# */ {
+		if (window.console) {
+			this.consoleDelegate = new SafariJSConsoleAppender();
+		}
+		else if (window.opera) {
+			this.consoleDelegate = new OperaJSConsoleAppender();
+		}
+		else if (netscape) {
+			this.consoleDelegate = new MozillaJSConsoleAppender();
+		}
+		else {
+			//@todo
+			log4jsLogger && log4jsLogger.error("Unsupported Browser");
+		}
+	}
+
 	/** 
 	 * @see Log4js.Appender#doAppend
 	 */
-	doAppend: function(loggingEvent) {
+	doAppend(loggingEvent) {
 		this.consoleDelegate.doAppend(loggingEvent);
-	},
+	}
+
 	/** 
 	 * @see Log4js.Appender#doClear
 	 */
-	doClear: function() {
+	doClear() {
 		this.consoleDelegate.doClear();
-	},
+	}
 	/**
 	 * @see Log4js.Appender#setLayout
 	 */
-	setLayout: function(layout){
+	setLayout(layout){
 		this.consoleDelegate.setLayout(layout);
-	},
+	}
 	
 	/** 
 	 * toString
 	 */
-	 toString: function() {
+	 toString() {
 	 	return "Log4js.BrowserConsoleAppender: " + this.consoleDelegate.toString(); 
 	 }
-});
+}

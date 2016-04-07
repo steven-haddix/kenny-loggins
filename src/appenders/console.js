@@ -1,5 +1,8 @@
-var helper = require('../helper');
-var PatternLayout = require('../layouts/pattern');
+import { bind } from '../helper';
+import Log4js from '../log4js';
+import { Level } from '../level';
+var Appender = require('../appender');
+var PatternLayout = require('./pattern');
 
 /**
  * Console Appender writes the logs to a console.  If "inline" is
@@ -14,65 +17,66 @@ var PatternLayout = require('../layouts/pattern');
  * @author Corey Johnson - original console code in Lumberjack (http://gleepglop.com/javascripts/logger/)
  * @author Seth Chisamore - adapted for use as a log4js appender
  */
-function ConsoleAppender(isInline) {
-	
-	/**
-	 * @type Log4js.Layout
-	 * @private
-	 */
-	this.layout = new PatternLayout(PatternLayout.TTCC_CONVERSION_PATTERN);
-	/**
-	 * @type boolean
-	 * @private
-	 */
-	this.inline = isInline;
 
-	/**
-	 * @type String
-	 * @private
-	 */
-	this.accesskey = "d";
-	
-	/**
-	 * @private
-	 */
-	this.tagPattern = null;
-	
-	this.commandHistory = [];
-  	this.commandIndex = 0;
-  	
-  	/**
-  	 * true if popup is blocked.
-  	 */
-  	this.popupBlocker = false;
-  	
-  	/**
-  	 * current output div-element.
-  	 */
-  	this.outputElement = null;
-  	
-  	this.docReference = null;
-	this.winReference = null;		
-		
-	if(this.inline) {
-		Log4js.attachEvent(window, 'load', Log4js.bind(this.initialize, this));
+//ConsoleAppender.prototype = helper.extend(new Appender(), /** @lends Log4js.ConsoleAppender# */ {
+export default class ConsoleAppender extends Appender {
+	constructor(isInline) {
+		super();
+		/**
+		 * @type Log4js.Layout
+		 * @private
+		 */
+		this.layout = new PatternLayout(PatternLayout.TTCC_CONVERSION_PATTERN);
+		/**
+		 * @type boolean
+		 * @private
+		 */
+		this.inline = isInline;
+
+		/**
+		 * @type String
+		 * @private
+		 */
+		this.accesskey = "d";
+
+		/**
+		 * @private
+		 */
+		this.tagPattern = null;
+
+		this.commandHistory = [];
+		this.commandIndex = 0;
+
+		/**
+		 * true if popup is blocked.
+		 */
+		this.popupBlocker = false;
+
+		/**
+		 * current output div-element.
+		 */
+		this.outputElement = null;
+
+		this.docReference = null;
+		this.winReference = null;
+
+		if (this.inline) {
+			Log4js.attachEvent(window, 'load', bind(this.initialize, this));
+		}
 	}
-};
-
-ConsoleAppender.prototype = helper.extend(new Log4js.Appender(), /** @lends Log4js.ConsoleAppender# */ {
 
 	/**
 	 * Set the access key to show/hide the inline console (default &quote;d&quote;)
 	 * @param key access key to show/hide the inline console
 	 */	
-	setAccessKey : function(key) {
+	setAccessKey(key) {
 		this.accesskey = key;
-	},
+	}
 
 	/**
 	 * @private
 	 */
-  	initialize : function() {
+  	initialize() {
 		
 		if(!this.inline) {
 
@@ -139,7 +143,7 @@ ConsoleAppender.prototype = helper.extend(new Log4js.Appender(), /** @lends Log4
 			closeButton.style.styleFloat = "right"; // IE dom bug...doesn't understand cssFloat
 			closeButton.style.color = "black";
 			closeButton.innerHTML = "close";
-			closeButton.onclick = Log4js.bind(this.toggle, this);
+			closeButton.onclick = helper.bind(this.toggle, this);
 			this.buttonsContainerElement.appendChild(closeButton);
 		}
 		
@@ -148,7 +152,7 @@ ConsoleAppender.prototype = helper.extend(new Log4js.Appender(), /** @lends Log4
 		clearButton.style.styleFloat = "right"; // IE dom bug...doesn't understand cssFloat
 		clearButton.style.color = "black";
 		clearButton.innerHTML = "clear";
-		clearButton.onclick = Log4js.bind(this.logger.clear, this.logger);
+			clearButton.onclick = helper.bind(this.logger.clear, this.logger);
 		this.buttonsContainerElement.appendChild(clearButton);
 	
 
@@ -166,8 +170,8 @@ ConsoleAppender.prototype = helper.extend(new Log4js.Appender(), /** @lends Log4
 		this.tagFilterElement.value = this.tagPattern;    
 		this.tagFilterElement.setAttribute('autocomplete', 'off'); // So Firefox doesn't flip out
 		
-		Log4js.attachEvent(this.tagFilterElement, 'keyup', Log4js.bind(this.updateTags, this));
-		Log4js.attachEvent(this.tagFilterElement, 'click', Log4js.bind( function() {this.tagFilterElement.select();}, this));
+		Log4js.attachEvent(this.tagFilterElement, 'keyup', bind(this.updateTags, this));
+		Log4js.attachEvent(this.tagFilterElement, 'click', bind( function() {this.tagFilterElement.select();}, this));
 		
 		// Add outputElement
 		this.outputElement = this.docReference.createElement('div');
@@ -191,29 +195,30 @@ ConsoleAppender.prototype = helper.extend(new Log4js.Appender(), /** @lends Log4
 		this.inputElement.value = 'Type command here'; 
 		this.inputElement.setAttribute('autocomplete', 'off'); // So Firefox doesn't flip out
 	
-		Log4js.attachEvent(this.inputElement, 'keyup', Log4js.bind(this.handleInput, this));
-		Log4js.attachEvent(this.inputElement, 'click', Log4js.bind( function() {this.inputElement.select();}, this));
+		Log4js.attachEvent(this.inputElement, 'keyup', bind(this.handleInput, this));
+		Log4js.attachEvent(this.inputElement, 'click', bind( function() {this.inputElement.select();}, this));
 		
 		if(this.inline){
-			window.setInterval(Log4js.bind(this.repositionWindow, this), 500);
+			window.setInterval(helper.bind(this.repositionWindow, this), 500);
 			this.repositionWindow();	
 			// Allow acess key link          
 			var accessElement = this.docReference.createElement('button');
 			accessElement.style.position = "absolute";
 			accessElement.style.top = "-100px";
 			accessElement.accessKey = this.accesskey;
-			accessElement.onclick = Log4js.bind(this.toggle, this);
+			accessElement.onclick = bind(this.toggle, this);
 			this.docReference.body.appendChild(accessElement);
 		} else {
 			this.show();
 		}
-	},
+	}
+
 	/**
 	 * shows/hide an element
 	 * @private
 	 * @return true if shown
 	 */
-	toggle : function() {
+	toggle() {
 		if (this.logElement.style.display == 'none') {
 		 	this.show();
 		 	return true;
@@ -221,27 +226,30 @@ ConsoleAppender.prototype = helper.extend(new Log4js.Appender(), /** @lends Log4
 			this.hide();
 			return false;
 		}
-	}, 
+	}
+
 	/**
 	 * @private
 	 */
-	show : function() {
+	show() {
 		this.logElement.style.display = '';
 	  	this.outputElement.scrollTop = this.outputElement.scrollHeight; // Scroll to bottom when toggled
  	  	this.inputElement.select();
-	}, 
+	}
+
 	/**
 	 * @private
 	 */	
-	hide : function() {
+	hide() {
 		this.logElement.style.display = 'none';
-	},  
+	}
+
 	/**
 	 * @private
 	 * @param message
 	 * @style
 	 */	
-	output : function(message, style) {
+	output(message, style) {
 
 		// If we are at the bottom of the window, then keep scrolling with the output			
 		var shouldScroll = (this.outputElement.scrollTop + (2 * this.outputElement.clientHeight)) >= this.outputElement.scrollHeight;
@@ -262,12 +270,12 @@ ConsoleAppender.prototype = helper.extend(new Log4js.Appender(), /** @lends Log4
 	  	if (shouldScroll) {				
 			this.outputElement.scrollTop = this.outputElement.scrollHeight;
 		}
-	},
+	}
 	
 	/**
 	 * @private
 	 */
-	updateTags : function() {
+	updateTags() {
 		
 		var pattern = this.tagFilterElement.value;
 	
@@ -290,22 +298,22 @@ ConsoleAppender.prototype = helper.extend(new Log4js.Appender(), /** @lends Log4
 		for (var i = 0; i < this.logger.loggingEvents.length; i++) {
   			this.doAppend(this.logger.loggingEvents[i]);
 		}  
-	},
+	}
 
 	/**
 	 * @private
 	 */	
-	repositionWindow : function() {
+	repositionWindow() {
 		var offset = window.pageYOffset || this.docReference.documentElement.scrollTop || this.docReference.body.scrollTop;
 		var pageHeight = self.innerHeight || this.docReference.documentElement.clientHeight || this.docReference.body.clientHeight;
 		this.logElement.style.top = (offset + pageHeight - this.logElement.offsetHeight) + "px";
-	},
+	}
 
 	/**
 	 * @param loggingEvent event to be logged
 	 * @see Log4js.Appender#doAppend
 	 */
-	doAppend : function(loggingEvent) {
+	doAppend(loggingEvent) {
 		
 		if(this.popupBlocker) {
 			//popup blocked, we return in this case
@@ -323,7 +331,7 @@ ConsoleAppender.prototype = helper.extend(new Log4js.Appender(), /** @lends Log4
 		
 		var style = '';
 	  	
-		if (loggingEvent.level.toString().search(/ERROR/) != -1) { 
+		if (loggingEvent.level.toString().search(/ERROR/) != -1) {
 			style += 'color:red';
 		} else if (loggingEvent.level.toString().search(/FATAL/) != -1) { 
 			style += 'color:red';
@@ -338,19 +346,20 @@ ConsoleAppender.prototype = helper.extend(new Log4js.Appender(), /** @lends Log4
 		}
 	
 		this.output(this.layout.format(loggingEvent), style);	
-	},
+	}
 
 	/**
 	 * @see Log4js.Appender#doClear
 	 */
-	doClear : function() {
+	doClear() {
 		this.outputElement.innerHTML = "";
-	},
+	}
+
 	/**
 	 * @private
 	 * @param e
 	 */
-	handleInput : function(e) {
+	handleInput(e) {
 		if (e.keyCode == 13 ) {      
 			var command = this.inputElement.value;
 			
@@ -394,19 +403,19 @@ ConsoleAppender.prototype = helper.extend(new Log4js.Appender(), /** @lends Log4
 	  	} else {
     		this.commandIndex = 0;
     	}
-	},
+	}
 
 	/**
 	 * @private
 	 */
-	makeWinName: function(category) {
+	makeWinName(category) {
 		return category.replace(/[^\d\w]/g, "_");
-	},
+	}
                 
 	/** 
 	 * toString
 	 */
-	 toString: function() {
+	 toString() {
 	 	return "Log4js.ConsoleAppender[inline=" + this.inline + "]"; 
 	 }
-}); 
+}

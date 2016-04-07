@@ -1,3 +1,6 @@
+var helper = require('../helper');
+var Layout = require('../layout');
+
 /**
  * SimpleLayout consists of the level of the log statement, followed by " - " 
  * and then the log message itself. For example,
@@ -7,12 +10,12 @@
  * @extends Log4js.Layout
  * @author Stephan Strittmatter
  */
-Log4js.SimpleLayout = function() {
+function SimpleLayout() {
 	this.LINE_SEP  = "\n";
 	this.LINE_SEP_LEN = 1;
 };
 
-Log4js.SimpleLayout.prototype = Log4js.extend(new Log4js.Layout(), /** @lends Log4js.SimpleLayout# */ {
+SimpleLayout.prototype = helper.extend(new Layout(), /** @lends Log4js.SimpleLayout# */ {
 	/** 
 	 * Implement this method to create your own layout format.
 	 * @param {Log4js.LoggingEvent} loggingEvent loggingEvent to format
@@ -45,3 +48,5 @@ Log4js.SimpleLayout.prototype = Log4js.extend(new Log4js.Layout(), /** @lends Lo
 		return "";
 	}
 });
+
+module.exports = SimpleLayout;

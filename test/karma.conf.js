@@ -10,8 +10,8 @@ module.exports = function(config) {
         files : [
             'node_modules/chai/chai.js',
             'target/log4js.min.js',
-            'src/test/js/unit/**/*.js',
-            'src/test/js/unit/*.js'
+            '/js/unit/**/*.js',
+            '/js/unit/*.js'
             // 'test/functional/**/*.js',
             // {pattern: 'src/test/**/*.png', watched: false, included: false, served: true}
         ],

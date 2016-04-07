@@ -1,3 +1,8 @@
+var SimpleLayout = require('./simple');
+var Appender = require('../appender');
+var Level = require('../level');
+var helper = require('../helper');
+
 /**
  * Windows Event Appender writes the logs to the Windows Event log.
  * PLEASE NOTE - Only works in IE..uses ActiveX to write to Windows Event log
@@ -7,9 +12,9 @@
  * @param logger log4js instance this appender is attached to
  * @author Seth Chisamore
  */
-Log4js.WindowsEventAppender = function() {
+function WindowsEventAppender() {
 	
-	this.layout = new Log4js.SimpleLayout();
+	this.layout = new SimpleLayout();
 	
 	try {
 		this.shell = new ActiveXObject("WScript.Shell");
@@ -18,7 +23,7 @@ Log4js.WindowsEventAppender = function() {
 	}
 };
 
-Log4js.WindowsEventAppender.prototype = Log4js.extend(new Log4js.Appender(), /** @lends Log4js.WindowsEventAppender# */ {
+WindowsEventAppender.prototype = helper.extend(new Appender(), /** @lends Log4js.WindowsEventAppender# */ {
 	/**
 	 * @param loggingEvent event to be logged
 	 * @see Log4js.Appender#doAppend
@@ -29,13 +34,13 @@ Log4js.WindowsEventAppender.prototype = Log4js.extend(new Log4js.Appender(), /**
 		// Map log level to windows event log level.
 		// Windows events: - SUCCESS: 0, ERROR: 1, WARNING: 2, INFORMATION: 4, AUDIT_SUCCESS: 8, AUDIT_FAILURE: 16
 		switch (loggingEvent.level) {	
-			case Log4js.Level.FATAL:
+			case Level.FATAL:
 				winLevel = 1;
 				break;
-			case Log4js.Level.ERROR:
+			case Level.ERROR:
 				winLevel = 1;
 				break;
-			case Log4js.Level.WARN:
+			case Level.WARN:
 				winLevel = 2;
 				break;
 			default:

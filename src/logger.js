@@ -1,7 +1,8 @@
-var Appender = require('./Appender');
-var Level = require('./level');
+import Appender from './appender';
 var DateFormatter = require('./dateFormatter');
-var CustomEvent = require('./CustomEvent');
+var CustomEvent = require('./customEvent');
+import LoggingEvent from './loggingEvent';
+import { Level } from './level';
 
 /**
  * Logger to log messages to the defined appender.</p>
@@ -12,52 +13,52 @@ var CustomEvent = require('./CustomEvent');
  * @param name name of category to log to
  * @author Stephan Strittmatter
  */
-function Logger(name) {
-	this.loggingEvents = [];
-	this.appenders = [];
-	/** category of logger */
-	this.category = name || "";
-	/** level to be logged */
-	this.level = Level.FATAL;
-	
-	this.dateformat = DateFormatter.DEFAULT_DATE_FORMAT;
+export default class Logger {
+	constructor(name) {
+		this.loggingEvents = [];
+		this.appenders = [];
+		/** category of logger */
+		this.category = name || "";
+		/** level to be logged */
+		this.level = Level.FATAL;
 
-	this.onlog = new CustomEvent();
-	this.onclear = new CustomEvent();
-	
-	/** appender to write in */
-	this.appenders.push(new Appender(this));
-	
-	// if multiple log objects are instantiated this will only log to the log 
-	// object that is declared last can't seem to get the attachEvent method to 
-	// work correctly
-	try {
-		window.onerror = this.windowError.bind(this);
-	} catch (e) {
-		//log4jsLogger.fatal(e);
+		this.dateformat = DateFormatter.DEFAULT_DATE_FORMAT;
+
+		this.onlog = new CustomEvent();
+		this.onclear = new CustomEvent();
+
+		/** appender to write in */
+		this.appenders.push(new Appender(this));
+
+		// if multiple log objects are instantiated this will only log to the log
+		// object that is declared last can't seem to get the attachEvent method to
+		// work correctly
+		try {
+			window.onerror = this.windowError.bind(this);
+		} catch (e) {
+			//log4jsLogger.fatal(e);
+		}
 	}
-};
 
-Logger.prototype = {
 
 	/**
 	 * add additional appender. DefaultAppender always is there.
 	 * @param appender additional wanted appender
 	 */
-	addAppender: function(appender) {
-		if (appender instanceof Log4js.Appender) {
+	addAppender(appender) {
+		if (appender instanceof Appender) {
 			appender.setLogger(this);
 			this.appenders.push(appender);			
 		} else {
 			throw "Not instance of an Appender: " + appender;
 		}
-	},
+	}
 
 	/**
 	 * set Array of appenders. Previous Appenders are cleared and removed.
 	 * @param {Array} appenders Array of Appenders
 	 */
-	setAppenders: function(appenders) {
+	setAppenders(appenders) {
 		//clear first all existing appenders
 		for(var i = 0; i < this.appenders.length; i++) {
 			this.appenders[i].doClear();
@@ -68,132 +69,145 @@ Logger.prototype = {
 		for(var j = 0; j < this.appenders.length; j++) {
 			this.appenders[j].setLogger(this);
 		}
-	},
+	}
 	
 	/**
 	 * Set the Loglevel default is LogLEvel.TRACE
 	 * @param level wanted logging level
 	 */
-	setLevel: function(level) {
+	setLevel(level) {
 		this.level = level;
-	},
+	}
 	
 	/** 
 	 * main log method logging to all available appenders 
 	 * @private
 	 */
-	log: function(logLevel, message, exception) {
-		var loggingEvent = new Log4js.LoggingEvent(this.category, logLevel,
+	log(logLevel, message, exception) {
+		var loggingEvent = new LoggingEvent(this.category, logLevel,
 			message, exception, this);
 		this.loggingEvents.push(loggingEvent);
 		this.onlog.dispatch(loggingEvent);
-	},
+	}
 	
 	/** clear logging */
-	clear : function () {
+	clear() {
 		try{
 			this.loggingEvents = [];
 			this.onclear.dispatch();
 		} catch(e){}
-	},
+	}
+
 	/** checks if Level Trace is enabled */
-	isTraceEnabled: function() {
-		if (this.level.valueOf() <= Level.TRACE.valueOf()) {
+	isTraceEnabled() {
+		if (this.level <= Level.TRACE) {
 			return true;
 		}
 		return false;
-	},
+	}
+
 	/** 
 	 * Trace messages 
 	 * @param message {Object} message to be logged
 	 */
-	trace: function(message) {
+	trace(message) {
 		if (this.isTraceEnabled()) {
 			this.log(Level.TRACE, message, null);
 		}
-	},
+	}
+
 	/** checks if Level Debug is enabled */
-	isDebugEnabled: function() {
-		if (this.level.valueOf() <= Level.DEBUG.valueOf()) {
+	isDebugEnabled() {
+		if (this.level <= Level.DEBUG) {
 			return true;
 		}
 		return false;
-	},
+	}
+
 	/**
 	 * Debug messages 
 	 * @param {Object} message  message to be logged
 	 * @param {Throwable} throwable 
 	 */
-	debug: function(message, throwable) {
+	debug(message, throwable) {
 		if (this.isDebugEnabled()) {
-			this.log(Log4js.Level.DEBUG, message, throwable);
+			this.log(Level.DEBUG, message, throwable);
 		}
-	},	
+	}
+
 	/** checks if Level Info is enabled */
-	isInfoEnabled: function() {
-		if (this.level.valueOf() <= Log4js.Level.INFO.valueOf()) {
+	isInfoEnabled() {
+		if (this.level <= Level.INFO) {
 			return true;
 		}
 		return false;
-	},
+	}
+
 	/** 
 	 * logging info messages 
 	 * @param {Object} message  message to be logged
 	 * @param {Throwable} throwable  
 	 */
-	info: function(message, throwable) {
+	info(message, throwable) {
+		debugger;
 		if (this.isInfoEnabled()) {
-			this.log(Log4js.Level.INFO, message, throwable);
+			this.log(Level.INFO, message, throwable);
 		}
-	},
+	}
+
 	/** checks if Level Warn is enabled */
-	isWarnEnabled: function() {
-		if (this.level.valueOf() <= Log4js.Level.WARN.valueOf()) {
+	isWarnEnabled() {
+		if (this.level <= Level.WARN) {
 			return true;
 		}
 		return false;
-	},
+	}
 
 	/** logging warn messages */
-	warn: function(message, throwable) {
+	warn(message, throwable) {
 		if (this.isWarnEnabled()) {
-			this.log(Log4js.Level.WARN, message, throwable);
+			this.log(Level.WARN, message, throwable);
 		}
-	},
+	}
+
 	/** checks if Level Error is enabled */
-	isErrorEnabled: function() {
-		if (this.level.valueOf() <= Log4js.Level.ERROR.valueOf()) {
+	isErrorEnabled() {
+		if (this.level <= Level.ERROR) {
 			return true;
 		}
 		return false;
-	},
+	}
+
 	/** logging error messages */
-	error: function(message, throwable) {
+	error(message, throwable) {
 		if (this.isErrorEnabled()) {
-			this.log(Log4js.Level.ERROR, message, throwable);
+			this.log(Level.ERROR, message, throwable);
 		}
-	},
+	}
+
 	/** checks if Level Fatal is enabled */
-	isFatalEnabled: function() {
-		if (this.level.valueOf() <= Log4js.Level.FATAL.valueOf()) {
+	isFatalEnabled() {
+		if (this.level <= Level.FATAL) {
 			return true;
 		}
 		return false;
-	},
+	}
+
 	/** logging fatal messages */
-	fatal: function(message, throwable) {
+	fatal(message, throwable) {
 		if (this.isFatalEnabled()) {
-			this.log(Log4js.Level.FATAL, message, throwable);
+			this.log(Level.FATAL, message, throwable);
 		}
-	},	
+	}
+
 	/** 
 	 * Capture main window errors and log as fatal.
 	 * @private
 	 */
-	windowError: function(msg, url, line){
+	windowError(msg, url, line){
 		var message = "Error in (" + (url || window.location) + ") on line "+ line +" with message (" + msg + ")";
-		this.log(Log4js.Level.FATAL, message, null);	
-	},
+		this.log(Level.FATAL, message, null);
+	}
 	
 	/**
 	 * Set the date format of logger. Following switches are supported:
@@ -208,9 +222,9 @@ Logger.prototype = {
 	 * @param {String} format format String for the date
 	 * @see {@getTimestamp}
 	 */
-	setDateFormat: function(format) {
+	setDateFormat(format) {
 	 	this.dateformat = format;
-	},
+	}
 	 
 	/**
 	 * Generates a timestamp using the format set in {Log4js.DateFormatter.formatDate}.
@@ -218,9 +232,7 @@ Logger.prototype = {
 	 * @see {@setDateFormat}
 	 * @return {String} A formatted timestamp with the current date and time.
 	 */
-	getFormattedTimestamp: function(date) {
+	getFormattedTimestamp(date) {
 	  return DateFormatter.formatDate(date, this.dateformat);
 	}
-};
-
-module.exports = Logger;
+}
