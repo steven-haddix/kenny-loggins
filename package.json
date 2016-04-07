@@ -1,15 +1,13 @@
 {
-  "name": "log4js",
-  "title": "Log4js - The Logging API for JavaScript",
-  "description": "Log4js - The Logging Framework for JavaScript",
-  "version": "2.0.0Beta1",
-  "main": "src/main/js/log4js.js",
-  "authors": [
-    "stritti (https://github.com/stritti)"
-  ],
+  "name": "kennyloggins",
+  "title": "Kenny Loggins",
+  "description": "The logging library that has your back in the danger zone!",
+  "version": "1.0.0",
+  "main": "lib/log4js.js",
+  "authors": "",
   "repository": {
     "type": "git",
-    "url": "https://github.com/stritti/log4js.git"
+    "url": "git@gitlab:wms/kennyloggins.git"
   },
   "keywords": [
     "log",
@@ -17,8 +15,7 @@
     "log4js",
     "log4j"
   ],
-  "license": "Apache License, Version 2.0",
-  "homepage": "http://stritti.github.io/log4js/",
+  "license": "ISC",
   "scripts": {
     "build": "cross-env BABEL_ENV=commonjs NODE_ENV=development webpack src/index.js dist/log4js.js",
     "build:commonjs": "cross-env BABEL_ENV=commonjs babel src --out-dir lib"
