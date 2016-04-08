@@ -1,3 +1,4 @@
+import Log4js from '../log4js';
 import Layout from '../layout';
 
 /**

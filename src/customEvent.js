@@ -38,6 +38,7 @@ CustomEvent.prototype = {
 				this.listeners[i](handler);
 			} catch (e) {
 				console.warn('Could not run the listener ' + this.listeners[i] + '. \n' + e);
+				console.log(e);
 			}
 		}
 	},

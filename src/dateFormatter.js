@@ -22,15 +22,15 @@ export const DEFAULT_DATE_FORMAT = 'yyyy-MM-ddThh:mm:ssO';
  * @static
  */
 export function formatDate(vDate, vFormat) {
-	const vDay = this.addZero(vDate.getDate());
-	const vMonth = this.addZero(vDate.getMonth() + 1);
-	const vYearLong = this.addZero(vDate.getFullYear());
-	const vYearShort = this.addZero(vDate.getFullYear().toString().substring(3, 4));
+	const vDay = addZero(vDate.getDate());
+	const vMonth = addZero(vDate.getMonth() + 1);
+	const vYearLong = addZero(vDate.getFullYear());
+	const vYearShort = addZero(vDate.getFullYear().toString().substring(3, 4));
 	const vYear = (vFormat.indexOf('yyyy') > -1 ? vYearLong : vYearShort);
-	const vHour = this.addZero(vDate.getHours());
-	const vMinute = this.addZero(vDate.getMinutes());
-	const vSecond = this.addZero(vDate.getSeconds());
-	const vTimeZone = this.zero(vDate);
+	const vHour = addZero(vDate.getHours());
+	const vMinute = addZero(vDate.getMinutes());
+	const vSecond = addZero(vDate.getSeconds());
+	const vTimeZone = zero(vDate);
 	let vDateString = vFormat.replace(/dd/g, vDay).replace(/MM/g, vMonth).replace(/y{1,4}/g, vYear);
 	vDateString = vDateString.replace(/hh/g, vHour).replace(/mm/g, vMinute).replace(/ss/g, vSecond);
 	vDateString = vDateString.replace(/O/g, vTimeZone);
@@ -52,14 +52,14 @@ export function formatDate(vDate, vFormat) {
  * @static
  */
  export function formatUTCDate(vDate, vFormat) {
-	const vDay = this.addZero(vDate.getUTCDate());
-	const vMonth = this.addZero(vDate.getUTCMonth() + 1);
-	const vYearLong = this.addZero(vDate.getUTCFullYear());
-	const vYearShort = this.addZero(vDate.getUTCFullYear().toString().substring(3, 4));
+	const vDay = addZero(vDate.getUTCDate());
+	const vMonth = addZero(vDate.getUTCMonth() + 1);
+	const vYearLong = addZero(vDate.getUTCFullYear());
+	const vYearShort = addZero(vDate.getUTCFullYear().toString().substring(3, 4));
 	const vYear = (vFormat.indexOf('yyyy') > -1 ? vYearLong : vYearShort);
-	const vHour	 = this.addZero(vDate.getUTCHours());
-	const vMinute = this.addZero(vDate.getUTCMinutes());
-	const vSecond = this.addZero(vDate.getUTCSeconds());
+	const vHour	 = addZero(vDate.getUTCHours());
+	const vMinute = addZero(vDate.getUTCMinutes());
+	const vSecond = addZero(vDate.getUTCSeconds());
 	let vDateString = vFormat.replace(/dd/g, vDay).replace(/MM/g, vMonth).replace(/y{1,4}/g, vYear);
 	vDateString = vDateString.replace(/hh/g, vHour).replace(/mm/g, vMinute).replace(/ss/g, vSecond);
 	return vDateString;
