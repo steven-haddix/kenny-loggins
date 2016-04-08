@@ -8,6 +8,28 @@ export var Level = {
 	WARN: 30000,
 	INFO: 20000,
 	DEBUG: 10000,
-	TRACE_INT: 5000,
-	ALL_INT: Number.MIN_VALUE
+	TRACE: 5000,
+	ALL: Number.MIN_VALUE,
+	toString: function(value) {
+		switch(value) {
+			case Number.MAX_VALUE:
+				return 'OFF';
+			case 50000:
+				return 'FATAL';
+			case 40000:
+				return 'ERROR';
+			case 30000:
+				return 'WARN';
+			case 20000:
+				return 'INFO';
+			case 10000:
+				return 'DEBUG';
+			case 5000:
+				return 'TRACE';
+			case Number.MIN_VALUE:
+				return 'ALL';
+		}
+	}
 };
+
+

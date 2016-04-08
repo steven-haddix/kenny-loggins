@@ -84,7 +84,7 @@ export default class Logger {
 	 * @private
 	 */
 	log(logLevel, message, exception) {
-		var loggingEvent = new LoggingEvent(this.category, logLevel,
+		var loggingEvent = new LoggingEvent(this.category, Level.toString(logLevel),
 			message, exception, this);
 		this.loggingEvents.push(loggingEvent);
 		this.onlog.dispatch(loggingEvent);
