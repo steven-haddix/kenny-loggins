@@ -3,7 +3,7 @@
  * @static
  * @final
  */
-var DEFAULT_DATE_FORMAT = "yyyy-MM-ddThh:mm:ssO";
+export const DEFAULT_DATE_FORMAT = 'yyyy-MM-ddThh:mm:ssO';
 
 /**
  * Formats the given date by the given pattern.<br />
@@ -21,20 +21,20 @@ var DEFAULT_DATE_FORMAT = "yyyy-MM-ddThh:mm:ssO";
  * @return {String} formatted date string
  * @static
  */
-function formatDate(vDate, vFormat) {
-  var vDay = this.addZero(vDate.getDate());
-  var vMonth = this.addZero(vDate.getMonth()+1);
-  var vYearLong = this.addZero(vDate.getFullYear());
-  var vYearShort = this.addZero(vDate.getFullYear().toString().substring(3,4));
-  var vYear = (vFormat.indexOf("yyyy")>-1?vYearLong:vYearShort);
-  var vHour  = this.addZero(vDate.getHours());
-  var vMinute = this.addZero(vDate.getMinutes());
-  var vSecond = this.addZero(vDate.getSeconds());
-  var vTimeZone = this.O(vDate);
-  var vDateString = vFormat.replace(/dd/g, vDay).replace(/MM/g, vMonth).replace(/y{1,4}/g, vYear);
-  vDateString = vDateString.replace(/hh/g, vHour).replace(/mm/g, vMinute).replace(/ss/g, vSecond);
-  vDateString = vDateString.replace(/O/g, vTimeZone);
-  return vDateString;
+export function formatDate(vDate, vFormat) {
+	const vDay = this.addZero(vDate.getDate());
+	const vMonth = this.addZero(vDate.getMonth() + 1);
+	const vYearLong = this.addZero(vDate.getFullYear());
+	const vYearShort = this.addZero(vDate.getFullYear().toString().substring(3, 4));
+	const vYear = (vFormat.indexOf('yyyy') > -1 ? vYearLong : vYearShort);
+	const vHour = this.addZero(vDate.getHours());
+	const vMinute = this.addZero(vDate.getMinutes());
+	const vSecond = this.addZero(vDate.getSeconds());
+	const vTimeZone = this.zero(vDate);
+	let vDateString = vFormat.replace(/dd/g, vDay).replace(/MM/g, vMonth).replace(/y{1,4}/g, vYear);
+	vDateString = vDateString.replace(/hh/g, vHour).replace(/mm/g, vMinute).replace(/ss/g, vSecond);
+	vDateString = vDateString.replace(/O/g, vTimeZone);
+	return vDateString;
 }
 /**
  * Formats the given date by the given pattern in UTC without timezone specific information.<br />
@@ -51,16 +51,16 @@ function formatDate(vDate, vFormat) {
  * @return {String} formatted date string
  * @static
  */
- function formatUTCDate(vDate, vFormat) {
-	var vDay = this.addZero(vDate.getUTCDate());
-	var vMonth = this.addZero(vDate.getUTCMonth()+1);
-	var vYearLong = this.addZero(vDate.getUTCFullYear());
-	var vYearShort = this.addZero(vDate.getUTCFullYear().toString().substring(3,4));
-	var vYear = (vFormat.indexOf("yyyy")>-1?vYearLong:vYearShort);
-	var vHour	 = this.addZero(vDate.getUTCHours());
-	var vMinute = this.addZero(vDate.getUTCMinutes());
-	var vSecond = this.addZero(vDate.getUTCSeconds());
-	var vDateString = vFormat.replace(/dd/g, vDay).replace(/MM/g, vMonth).replace(/y{1,4}/g, vYear);
+ export function formatUTCDate(vDate, vFormat) {
+	const vDay = this.addZero(vDate.getUTCDate());
+	const vMonth = this.addZero(vDate.getUTCMonth() + 1);
+	const vYearLong = this.addZero(vDate.getUTCFullYear());
+	const vYearShort = this.addZero(vDate.getUTCFullYear().toString().substring(3, 4));
+	const vYear = (vFormat.indexOf('yyyy') > -1 ? vYearLong : vYearShort);
+	const vHour	 = this.addZero(vDate.getUTCHours());
+	const vMinute = this.addZero(vDate.getUTCMinutes());
+	const vSecond = this.addZero(vDate.getUTCSeconds());
+	let vDateString = vFormat.replace(/dd/g, vDay).replace(/MM/g, vMonth).replace(/y{1,4}/g, vYear);
 	vDateString = vDateString.replace(/hh/g, vHour).replace(/mm/g, vMinute).replace(/ss/g, vSecond);
 	return vDateString;
 }
@@ -69,8 +69,8 @@ function formatDate(vDate, vFormat) {
  * @private
  * @static
  */
-function addZero(vNumber) {
-  return ((vNumber < 10) ? "0" : "") + vNumber;
+export function addZero(vNumber) {
+  return ((vNumber < 10) ? '0' : '') + vNumber;
 }
 
 /**
@@ -78,20 +78,12 @@ function addZero(vNumber) {
  * Thanks to http://www.svendtofte.com/code/date_format/
  * @private
  */
-function Zero(date) {
+export function zero(date) {
 	// Difference to Greenwich time (GMT) in hours
-	var os = Math.abs(date.getTimezoneOffset());
-	var h = String(Math.floor(os/60));
-	var m = String(os%60);
-	if(h.length == 1) h = "0" + h;
-	if(m.length == 1) m = "0" + m;
-	return date.getTimezoneOffset() < 0 ? "+"+h+m : "-"+h+m;
+	const os = Math.abs(date.getTimezoneOffset());
+	let h = String(Math.floor(os / 60));
+	let m = String(os % 60);
+	if (h.length === 1) h = '0' + h;
+	if (m.length === 1) m = '0' + m;
+	return date.getTimezoneOffset() < 0 ? '+' + h + m : '-' + h + m;
 }
-
-module.exports = {
-	DEFAULT_DATE_FORMAT,
-	formatDate,
-	formatUTCDate,
-	addZero,
-	Zero
-};

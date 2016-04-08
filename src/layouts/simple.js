@@ -1,5 +1,4 @@
-var helper = require('../helper');
-var Layout = require('../layout');
+import Layout from '../layout';
 
 /**
  * SimpleLayout consists of the level of the log statement, followed by " - " 
@@ -10,43 +9,47 @@ var Layout = require('../layout');
  * @extends Log4js.Layout
  * @author Stephan Strittmatter
  */
-function SimpleLayout() {
-	this.LINE_SEP  = "\n";
-	this.LINE_SEP_LEN = 1;
-};
+export default class SimpleLayout extends Layout {
+	constructor() {
+		super();
 
-SimpleLayout.prototype = helper.extend(new Layout(), /** @lends Log4js.SimpleLayout# */ {
-	/** 
+		this.LINE_SEP = '\n';
+		this.LINE_SEP_LEN = 1;
+	}
+
+	/**
 	 * Implement this method to create your own layout format.
 	 * @param {Log4js.LoggingEvent} loggingEvent loggingEvent to format
 	 * @return formatted String
 	 * @type String
 	 */
-	format: function(loggingEvent) {
-		return loggingEvent.level.toString() + " - " + loggingEvent.message + this.LINE_SEP;
-	},
-	/** 
-	 * Returns the content type output by this layout. 
+	format(loggingEvent) {
+		return loggingEvent.level.toString() + ' - ' +
+			loggingEvent.message + this.LINE_SEP;
+	}
+
+	/**
+	 * Returns the content type output by this layout.
 	 * @return The base class returns "text/plain".
 	 * @type String
 	 */
-	getContentType: function() {
-		return "text/plain";
-	},
-	/** 
+	getContentType() {
+		return 'text/plain';
+	}
+
+	/**
 	 * @return Returns the header for the layout format. The base class returns null.
 	 * @type String
 	 */
-	getHeader: function() {
-		return "";
-	},
-	/** 
+	getHeader() {
+		return '';
+	}
+
+	/**
 	 * @return Returns the footer for the layout format. The base class returns null.
 	 * @type String
 	 */
-	getFooter: function() {
-		return "";
+	getFooter() {
+		return '';
 	}
-});
-
-module.exports = SimpleLayout;
+}

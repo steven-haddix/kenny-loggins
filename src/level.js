@@ -1,7 +1,7 @@
 /**
  * Level Enumeration.
  */
-export var Level = {
+export const Level = {
 	OFF: Number.MAX_VALUE,
 	FATAL: 50000,
 	ERROR: 40000,
@@ -10,8 +10,8 @@ export var Level = {
 	DEBUG: 10000,
 	TRACE: 5000,
 	ALL: Number.MIN_VALUE,
-	toString: function(value) {
-		switch(value) {
+	toString(value) {
+		switch (value) {
 			case Number.MAX_VALUE:
 				return 'OFF';
 			case 50000:
@@ -28,6 +28,8 @@ export var Level = {
 				return 'TRACE';
 			case Number.MIN_VALUE:
 				return 'ALL';
+			default:
+				return 'OFF';
 		}
 	}
 };

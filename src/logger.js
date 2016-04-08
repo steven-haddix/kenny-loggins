@@ -1,6 +1,6 @@
 import Appender from './appender';
-var DateFormatter = require('./dateFormatter');
-var CustomEvent = require('./customEvent');
+import { DEFAULT_DATE_FORMAT, formatDate } from './dateFormatter';
+let CustomEvent = require('./customEvent');
 import LoggingEvent from './loggingEvent';
 import { Level } from './level';
 
@@ -18,11 +18,11 @@ export default class Logger {
 		this.loggingEvents = [];
 		this.appenders = [];
 		/** category of logger */
-		this.category = name || "";
+		this.category = name || '';
 		/** level to be logged */
 		this.level = Level.FATAL;
 
-		this.dateformat = DateFormatter.DEFAULT_DATE_FORMAT;
+		this.dateformat = DEFAULT_DATE_FORMAT;
 
 		this.onlog = new CustomEvent();
 		this.onclear = new CustomEvent();
@@ -48,7 +48,7 @@ export default class Logger {
 	addAppender(appender) {
 		if (appender instanceof Appender) {
 			appender.setLogger(this);
-			this.appenders.push(appender);			
+			this.appenders.push(appender);
 		} else {
 			throw "Not instance of an Appender: " + appender;
 		}
@@ -59,18 +59,18 @@ export default class Logger {
 	 * @param {Array} appenders Array of Appenders
 	 */
 	setAppenders(appenders) {
-		//clear first all existing appenders
-		for(var i = 0; i < this.appenders.length; i++) {
+		// clear first all existing appenders
+		for (let i = 0; i < this.appenders.length; i++) {
 			this.appenders[i].doClear();
 		}
-		
+
 		this.appenders = appenders;
-		
-		for(var j = 0; j < this.appenders.length; j++) {
+
+		for (let j = 0; j < this.appenders.length; j++) {
 			this.appenders[j].setLogger(this);
 		}
 	}
-	
+
 	/**
 	 * Set the Loglevel default is LogLEvel.TRACE
 	 * @param level wanted logging level
@@ -78,24 +78,26 @@ export default class Logger {
 	setLevel(level) {
 		this.level = level;
 	}
-	
-	/** 
-	 * main log method logging to all available appenders 
+
+	/**
+	 * main log method logging to all available appenders
 	 * @private
 	 */
 	log(logLevel, message, exception) {
-		var loggingEvent = new LoggingEvent(this.category, Level.toString(logLevel),
+		const loggingEvent = new LoggingEvent(this.category, Level.toString(logLevel),
 			message, exception, this);
 		this.loggingEvents.push(loggingEvent);
 		this.onlog.dispatch(loggingEvent);
 	}
-	
+
 	/** clear logging */
 	clear() {
-		try{
+		try {
 			this.loggingEvents = [];
 			this.onclear.dispatch();
-		} catch(e){}
+		} catch (e) {
+			console.log(e);
+		}
 	}
 
 	/** checks if Level Trace is enabled */
@@ -106,8 +108,8 @@ export default class Logger {
 		return false;
 	}
 
-	/** 
-	 * Trace messages 
+	/**
+	 * Trace messages
 	 * @param message {Object} message to be logged
 	 */
 	trace(message) {
@@ -125,9 +127,9 @@ export default class Logger {
 	}
 
 	/**
-	 * Debug messages 
+	 * Debug messages
 	 * @param {Object} message  message to be logged
-	 * @param {Throwable} throwable 
+	 * @param {Throwable} throwable
 	 */
 	debug(message, throwable) {
 		if (this.isDebugEnabled()) {
@@ -143,10 +145,10 @@ export default class Logger {
 		return false;
 	}
 
-	/** 
-	 * logging info messages 
+	/**
+	 * logging info messages
 	 * @param {Object} message  message to be logged
-	 * @param {Throwable} throwable  
+	 * @param {Throwable} throwable
 	 */
 	info(message, throwable) {
 		debugger;
@@ -200,15 +202,16 @@ export default class Logger {
 		}
 	}
 
-	/** 
+	/**
 	 * Capture main window errors and log as fatal.
 	 * @private
 	 */
-	windowError(msg, url, line){
-		var message = "Error in (" + (url || window.location) + ") on line "+ line +" with message (" + msg + ")";
+	windowError(msg, url, line) {
+		const message = 'Error in (' + (url || window.location) + ') on line ' +
+			line + ' with message (' + msg + ')';
 		this.log(Level.FATAL, message, null);
 	}
-	
+
 	/**
 	 * Set the date format of logger. Following switches are supported:
 	 * <ul>
@@ -223,9 +226,9 @@ export default class Logger {
 	 * @see {@getTimestamp}
 	 */
 	setDateFormat(format) {
-	 	this.dateformat = format;
+		this.dateformat = format;
 	}
-	 
+
 	/**
 	 * Generates a timestamp using the format set in {Log4js.DateFormatter.formatDate}.
 	 * @param {Date} date the date to format
@@ -233,6 +236,6 @@ export default class Logger {
 	 * @return {String} A formatted timestamp with the current date and time.
 	 */
 	getFormattedTimestamp(date) {
-	  return DateFormatter.formatDate(date, this.dateformat);
+		return formatDate(date, this.dateformat);
 	}
 }
