@@ -1,5 +1,5 @@
 import Appender from '../appender';
-import XMLLayout from '../layouts/xml';
+import JSONLayout from '../layouts/json';
 const FifoBuffer = require('../fifoBuffer');
 
 /**
@@ -57,7 +57,7 @@ export default class AjaxAppender extends Appender {
 		 * @type Log4js.Layout
 		 * @private
 		 */
-		this.layout = new XMLLayout();
+		this.layout = new JSONLayout();
 		/**
 		 * @type XMLHttpRequest
 		 * @private

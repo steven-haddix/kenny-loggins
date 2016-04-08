@@ -137,7 +137,7 @@ class SafariJSConsoleAppender extends Appender {
  * specific JavaScript Console Appender of the browser.
  *
  * @constructor
- * @extends Log4js.Appender 
+ * @extends Log4js.Appender
  * @author Stephan Strittmatter
  * @since 1.0
  */
@@ -153,16 +153,12 @@ export default class BrowserConsoleAppender extends Appender {
 
 		if (window.console) {
 			this.consoleDelegate = new SafariJSConsoleAppender();
-		}
-		else if (window.opera) {
+		} else if (window.opera) {
 			this.consoleDelegate = new OperaJSConsoleAppender();
-		}
-		else if (netscape) {
+		} else if (netscape) {
 			this.consoleDelegate = new MozillaJSConsoleAppender();
-		}
-		else {
-			//@todo
-			log4jsLogger && log4jsLogger.error("Unsupported Browser");
+		} else {
+			console.error('Unsupported Browser');
 		}
 	}
 

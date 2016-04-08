@@ -1,8 +1,8 @@
 import { bind } from '../helper';
 import Log4js from '../log4js';
-import { Level } from '../level';
-var Appender = require('../appender');
-var PatternLayout = require('./pattern');
+import { getLevelColorCode } from '../level';
+const Appender = require('../appender');
+const PatternLayout = require('./pattern');
 
 /**
  * Console Appender writes the logs to a console.  If "inline" is
@@ -233,13 +233,13 @@ export default class ConsoleAppender extends Appender {
 	 */
 	show() {
 		this.logElement.style.display = '';
-	  	this.outputElement.scrollTop = this.outputElement.scrollHeight; // Scroll to bottom when toggled
- 	  	this.inputElement.select();
+		this.outputElement.scrollTop = this.outputElement.scrollHeight; // Scroll to bottom when toggled
+		this.inputElement.select();
 	}
 
 	/**
 	 * @private
-	 */	
+	 */
 	hide() {
 		this.logElement.style.display = 'none';
 	}
@@ -314,45 +314,28 @@ export default class ConsoleAppender extends Appender {
 	 * @see Log4js.Appender#doAppend
 	 */
 	doAppend(loggingEvent) {
-		
-		if(this.popupBlocker) {
-			//popup blocked, we return in this case
+		if (this.popupBlocker) {
+			// popup blocked, we return in this case
 			return;
 		}
-		
+
 		if ((!this.inline) && (!this.winReference || this.winReference.closed)) {
 			this.initialize();
 		}
-		
-		if (this.tagPattern !== null && 
+
+		if (this.tagPattern !== null &&
 			loggingEvent.level.toString().search(new RegExp(this.tagPattern, 'igm')) == -1) {
 			return;
 		}
-		
-		var style = '';
-	  	
-		if (loggingEvent.level.toString().search(/ERROR/) != -1) {
-			style += 'color:red';
-		} else if (loggingEvent.level.toString().search(/FATAL/) != -1) { 
-			style += 'color:red';
-		} else if (loggingEvent.level.toString().search(/WARN/) != -1) { 
-			style += 'color:orange';
-		} else if (loggingEvent.level.toString().search(/DEBUG/) != -1) {
-			style += 'color:green';
-		} else if (loggingEvent.level.toString().search(/INFO/) != -1) {
-			style += 'color:white';
-		} else {
-			style += 'color:yellow';
-		}
-	
-		this.output(this.layout.format(loggingEvent), style);	
+
+		this.output(this.layout.format(loggingEvent), 'color:' + getLevelColorCode(loggingEvent.level));
 	}
 
 	/**
 	 * @see Log4js.Appender#doClear
 	 */
 	doClear() {
-		this.outputElement.innerHTML = "";
+		this.outputElement.innerHTML = '';
 	}
 
 	/**

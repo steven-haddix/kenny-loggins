@@ -34,4 +34,21 @@ export const Level = {
 	}
 };
 
+export function getLevelColorCode(level) {
+	switch (level) {
+		case Level.ERROR:
+			return 'red';
+		case Level.FATAL:
+			return 'red';
+		case Level.WARN:
+			return 'orange';
+		case Level.DEBUG:
+			return 'green';
+		case Level.INFO:
+			return 'white';
+		default:
+			return 'yellow';
+	}
+}
+
 

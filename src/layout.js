@@ -8,7 +8,7 @@
 export default class Layout {
 	/**
 	 * Implement this method to create your own layout format.
-	 * @param {Log4js.LoggingEvent} loggingEvent loggingEvent to format
+	 * @param {LoggingEvent} loggingEvent loggingEvent to format
 	 * @return formatted String
 	 * @type String
 	 */

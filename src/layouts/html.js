@@ -1,5 +1,5 @@
 import Layout from '../layout';
-import Level from '../Level';
+import { getLevelColorCode } from '../Level';
 
 /**
  * HtmlLayout write the logs in Html format.
@@ -16,9 +16,10 @@ export default class HtmlLayout extends Layout {
 	 * @type String
 	 */
 	format(loggingEvent) {
-		return "<div style=\"" + this.getStyle(loggingEvent) +
-			"\">" + loggingEvent.getFormattedTimestamp() + " - " +
-			loggingEvent.level.toString() + " - " + loggingEvent.message + "</div>\n";
+		const logLevel = loggingEvent.level.toString();
+		const logLevelColor = getLevelColorCode(loggingEvent.level);
+		const timeStamp = loggingEvent.getFormattedTimestamp();
+		return `<div style="color:${logLevelColor}">${timeStamp} - ${logLevel} - ${loggingEvent.message}</div>\n`;
 	}
 
 	/**
@@ -44,22 +45,5 @@ export default class HtmlLayout extends Layout {
 	 */
 	getFooter() {
 		return '</body></html>';
-	}
-
-	getStyle(loggingEvent) {
-		switch (loggingEvent.level) {
-			case Level.ERROR:
-				return 'color:red';
-			case Level.FATAL:
-				return 'color:red';
-			case Level.WARN:
-				return 'color:orange';
-			case Level.DEBUG:
-				return 'color:green';
-			case Level.INFO:
-				return 'color:white';
-			default:
-				return 'color:yellow';
-		}
 	}
 }
