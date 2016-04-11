@@ -13,6 +13,7 @@ import Layout from '../layout';
  */
 export default class BasicLayout extends Layout {
 	constructor() {
+		super();
 		this.LINE_SEP = '\n';
 	}
 

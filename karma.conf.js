@@ -2,16 +2,15 @@ module.exports = function(config) {
     config.set({
 
         // base path, that will be used to resolve files and exclude
-        basePath : '../../',
+        basePath : '.',
 
         frameworks : ['mocha'],
 
         // list of files / patterns to load in the browser
         files : [
             'node_modules/chai/chai.js',
-            'target/log4js.min.js',
-            '/js/unit/**/*.js',
-            '/js/unit/*.js'
+            'test/js/unit/**/*.js',
+            'test/js/unit/*.js'
             // 'test/functional/**/*.js',
             // {pattern: 'src/test/**/*.png', watched: false, included: false, served: true}
         ],
@@ -54,7 +53,7 @@ module.exports = function(config) {
         // - PhantomJS
         // - IE (only Windows)
         // CLI --browsers Chrome,Firefox,Safari
-        browsers : ['Firefox'],
+        browsers : ['PhantomJS'],
 
         // If browser does not capture in given timeout [ms], kill it
         // CLI --capture-timeout 60000
@@ -69,15 +68,25 @@ module.exports = function(config) {
         reportSlowerThan : 5000,
 
         preprocessors : {
-        //    '**/client/js/*.js': 'coverage'
+            'test/js/unit/**/*.js': ['webpack'],
+            'test/js/unit/*.js': ['webpack']
         },
 
         plugins : [
             // 'karma-chrome-launcher',
             'karma-firefox-launcher',
             'karma-mocha',
-            // 'karma-phantomjs-launcher'
-            'karma-spec-reporter'
-        ]
+            'karma-phantomjs-launcher',
+            'karma-spec-reporter',
+            'karma-babel-preprocessor',
+            'karma-webpack'
+        ],
+        // Test webpack config
+        webpack: require('./webpack.config'),
+
+        // Hide webpack build information from output
+        webpackMiddleware: {
+            noInfo: true
+        }
     });
 };

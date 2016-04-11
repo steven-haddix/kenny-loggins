@@ -1,24 +1,7 @@
-var helper = require('../helper');
-var Layout = require('../layout');
+import Layout from '../layout';
+import { formatDate } from '../dateFormatter';
 
-/**
- * PatternLayout 
- *
- * @constructor
- * @extends Log4js.Layout
- * @author Stephan Strittmatter
- */
-function PatternLayout(pattern) {
-
-
-	if (pattern) {
-		this.pattern = pattern;
-	} else {
-		this.pattern = PatternTypes.DEFAULT_CONVERSION_PATTERN;
-	}
-};
-
-module.exports = PatternTypes = {
+export const PatternTypes = {
 	TTCC_CONVERSION_PATTERN:"%r %p %c - %m%n",
 	DEFAULT_CONVERSION_PATTERN: "%m%n",
 	ISO8601_DATEFORMAT: "yyyy-MM-dd HH:mm:ss,SSS",
@@ -26,31 +9,50 @@ module.exports = PatternTypes = {
 	ABSOLUTETIME_DATEFORMAT: "HH:mm:ss,SSS"
 };
 
-PatternLayout.prototype = helper.extend(new Layout(), /** @lends Log4js.PatternLayout# */ {
-	/** 
-	 * Returns the content type output by this layout. 
+/**
+ * PatternLayout
+ *
+ * @constructor
+ * @extends Log4js.Layout
+ * @author Stephan Strittmatter
+ */
+export default class PatternLayout extends Layout {
+	constructor(pattern) {
+		super();
+
+		if (pattern) {
+			this.pattern = pattern;
+		} else {
+			this.pattern = PatternTypes.DEFAULT_CONVERSION_PATTERN;
+		}
+	}
+
+	/**
+	 * Returns the content type output by this layout.
 	 * @return "text/plain".
 	 * @type String
 	 */
-	getContentType: function() {
+	getContentType() {
 		return "text/plain";
-	},
+	}
+
 	/** 
 	 * @return Returns the header for the layout format.
 	 * @type String
 	 */
-	getHeader: function() {
+	getHeader() {
 		return null;
-	},
+	}
+
 	/** 
 	 * @return Returns the footer for the layout format.
 	 * @type String
 	 */
-	getFooter: function() {
+	getFooter() {
 		return null;
-	},
+	}
 	
-	format: function(loggingEvent) {
+	format(loggingEvent) {
 		var regex = /%(-?[0-9]+)?(\.?[0-9]+)?([cdmnpr%])(\{([^\}]+)\})?|([^%]+)/;
 		var formattedString = "";
 		var result;
@@ -101,7 +103,7 @@ PatternLayout.prototype = helper.extend(new Layout(), /** @lends Log4js.PatternL
 							}
 						}
 						// Format the date
-						replacement = (new Log4js.SimpleDateFormat(dateFormat)).format(loggingEvent.startTime);
+						replacement = formatDate(loggingEvent.startTime, dateFormat);
 						break;
 					case "m":
 						replacement = loggingEvent.message;
@@ -154,4 +156,4 @@ PatternLayout.prototype = helper.extend(new Layout(), /** @lends Log4js.PatternL
 		}
 		return formattedString;
 	}
-});
+}

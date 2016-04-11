@@ -99,7 +99,7 @@ export default class XMLLayout extends Layout {
 			
 			exStr +=  "\t\t<log4js:stacktrace>";
 			exStr +=  "\t\t\t<log4js:location fileName=\""+ex.fileName+"\" lineNumber=\""+ex.lineNumber+"\" />";
-			exStr +=  "\t\t</log4js:stacktrace>";x
+			exStr +=  "\t\t</log4js:stacktrace>";
 			exStr = "\t</log4js:throwable>";
 			return exStr;
 		}

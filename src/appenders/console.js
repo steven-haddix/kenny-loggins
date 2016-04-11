@@ -1,8 +1,8 @@
 import { bind } from '../helper';
 import Log4js from '../log4js';
 import { getLevelColorCode } from '../level';
-const Appender = require('../appender');
-const PatternLayout = require('./pattern');
+import Appender from '../appender';
+import PatternLayout from '../layouts/pattern';
 
 /**
  * Console Appender writes the logs to a console.  If "inline" is
@@ -18,7 +18,6 @@ const PatternLayout = require('./pattern');
  * @author Seth Chisamore - adapted for use as a log4js appender
  */
 
-//ConsoleAppender.prototype = helper.extend(new Appender(), /** @lends Log4js.ConsoleAppender# */ {
 export default class ConsoleAppender extends Appender {
 	constructor(isInline) {
 		super();

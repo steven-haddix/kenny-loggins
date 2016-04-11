@@ -94,6 +94,10 @@ export default class AjaxAppender extends Appender {
 		console.trace('< AjaxAppender.doClear');
 	}
 
+	getThreshold() {
+		return this.threshold;
+	}
+
 	/**
 	 * Set the threshold when logs have to be send. Default threshold is 1.
 	 * @praram {int} threshold new threshold
@@ -102,6 +106,7 @@ export default class AjaxAppender extends Appender {
 		console.trace('> AjaxAppender.setThreshold: ' + threshold);
 		this.threshold = threshold;
 		console.trace('< AjaxAppender.setThreshold');
+		return this;
 	}
 
 	/**
