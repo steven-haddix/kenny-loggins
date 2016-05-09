@@ -1,5 +1,5 @@
-import Log4js from '../log4js';
-import Layout from '../layout';
+import KennyLoggins from '../KennyLoggins';
+import BaseLayout from './BaseLayout';
 
 /**
  * XMLLayout write the logs in XML format.
@@ -13,7 +13,7 @@ import Layout from '../layout';
  * @extends Log4js.Layout
  * @author Stephan Strittmatter
  */
-export default class XMLLayout extends Layout {
+export default class XMLLayout extends BaseLayout {
 	/**
 	 * Implement this method to create your own layout format.
 	 * @param {Log4js.LoggingEvent} loggingEvent loggingEvent to format
@@ -65,7 +65,7 @@ export default class XMLLayout extends Layout {
 	 * @type String
 	 */
 	getHeader() {
-		return "<log4js:eventSet version=\"" + Log4js.version + 
+		return "<log4js:eventSet version=\"" + KennyLoggins.version +
 			"\" xmlns:log4js=\"http://stritti.github.io/log4js//2007/log4js/\">\n";
 	}
 

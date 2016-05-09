@@ -1,4 +1,4 @@
-var Appender = require('../appender');
+var Appender = require('appender');
 var helper = require('../helper');
 /**
  * Metatag Appender writing the logs to meta tags

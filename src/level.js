@@ -31,24 +31,27 @@ export const Level = {
 			default:
 				return 'OFF';
 		}
+	},
+	toLevel(string) {
+		switch (string) {
+			case 'OFF':
+				return this.OFF;
+			case 'FATAL':
+				return this.FATAL;
+			case 'ERROR':
+				return this.ERROR;
+			case 'WARN':
+				return this.WARN;
+			case 'INFO':
+				return this.INFO;
+			case 'DEBUG':
+				return this.DEBUG;
+			case 'TRACE':
+				return this.TRACE;
+			case 'ALL':
+				return this.ALL;
+			default:
+				return this.OFF;
+		}
 	}
 };
-
-export function getLevelColorCode(level) {
-	switch (level) {
-		case Level.ERROR:
-			return 'red';
-		case Level.FATAL:
-			return 'red';
-		case Level.WARN:
-			return 'orange';
-		case Level.DEBUG:
-			return 'green';
-		case Level.INFO:
-			return 'white';
-		default:
-			return 'yellow';
-	}
-}
-
-

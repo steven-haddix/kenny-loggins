@@ -2,8 +2,8 @@
   "name": "kennyloggins",
   "title": "Kenny Loggins",
   "description": "The logging library that has your back in the danger zone!",
-  "version": "1.0.0",
-  "main": "lib/log4js.js",
+  "version": "2.0.0",
+  "main": "lib/index.js",
   "authors": "",
   "repository": {
     "type": "git",
@@ -11,41 +11,54 @@
   },
   "keywords": [
     "log",
-    "logging",
-    "log4js",
-    "log4j"
+    "logging"
   ],
   "license": "ISC",
   "scripts": {
-    "build": "cross-env BABEL_ENV=commonjs NODE_ENV=development webpack src/index.js dist/log4js.js",
+    "build": "cross-env BABEL_ENV=commonjs NODE_ENV=development webpack src/index.js dist/kennyloggins.js",
     "build:commonjs": "cross-env BABEL_ENV=commonjs babel src --out-dir lib",
-    "test": ""
+    "test": "cross-env BABEL_ENV=commonjs mocha --compilers js:babel-register --recursive",
+    "test:karma": "karma start"
   },
   "devDependencies": {
     "babel-cli": "^6.6.5",
     "babel-core": "^6.7.2",
     "babel-eslint": "^6.0.0",
     "babel-loader": "^6.2.4",
-    "babel-plugin-react-transform": "^2.0.2",
+    "babel-plugin-transform-object-assign": "^6.5.0",
     "babel-preset-es2015": "^6.6.0",
-    "chai": "^2.2.0",
+    "babel-register": "^6.8.0",
+    "chai": "^3.5.0",
     "clean-webpack-plugin": "^0.1.8",
     "cross-env": "^1.0.7",
     "eslint": "^2.5.3",
     "eslint-config-airbnb": "^6.2.0",
     "eslint-loader": "^1.3.0",
+    "expect": "^1.20.1",
     "html-webpack-plugin": "^2.12.0",
     "html-webpack-template": "^4.0.0",
     "karma": "^0.13.9",
+    "karma-chai": "^0.1.0",
     "karma-cli": "^0.1.2",
     "karma-firefox-launcher": "^0.1.4",
     "karma-mocha": "^0.1.10",
     "karma-phantomjs-launcher": "^1.0.0",
+    "karma-sinon": "^1.0.5",
+    "karma-sinon-chai": "^1.2.0",
+    "karma-sourcemap-loader": "^0.3.7",
     "karma-spec-reporter": "0.0.18",
     "karma-webpack": "^1.7.0",
     "mocha": "^2.2.1",
+    "phantomjs-polyfill": "0.0.2",
     "phantomjs-prebuilt": "^2.1.7",
+    "sinon": "^1.17.4",
+    "sinon-chai": "^2.8.0",
     "webpack": "^1.12.14",
     "webpack-merge": "^0.8.4"
+  },
+  "dependencies": {
+    "bluebird": "^3.3.5",
+    "superagent": "^1.8.3",
+    "superagent-legacyiesupport": "^1.0.1"
   }
 }

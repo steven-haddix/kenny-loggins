@@ -1,4 +1,4 @@
-import Layout from '../layout';
+import BaseLayout from './BaseLayout';
 
 /**
  * BasicLayout is a simple layout for storing the loggs. The loggs are stored
@@ -11,7 +11,7 @@ import Layout from '../layout';
  * @extends Log4js.Layout
  * @author Stephan Strittmatter
  */
-export default class BasicLayout extends Layout {
+export default class BasicLayout extends BaseLayout {
 	constructor() {
 		super();
 		this.LINE_SEP = '\n';
@@ -24,6 +24,8 @@ export default class BasicLayout extends Layout {
 	 * @type String
 	 */
 	format(loggingEvent) {
+
+
 		return loggingEvent.categoryName + '~' +
 			loggingEvent.startTime.toLocaleString() +
 			' [' + loggingEvent.level.toString() + '] ' +

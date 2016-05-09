@@ -1,76 +1,45 @@
-import Appender from './appender';
-import { DEFAULT_DATE_FORMAT, formatDate } from './dateFormatter';
-let CustomEvent = require('./customEvent');
-import LoggingEvent from './loggingEvent';
-import { Level } from './level';
+import Appender from './appenders/BaseAppender';
+import { DEFAULT_DATE_FORMAT, formatDate } from './helpers/dateHelper';
+import LoggingEvent from './LoggingEvent';
+import EventDispatcher from './EventDispatcher';
+import { Level, getLevelFromText } from './level';
+import { createAppenders } from './appenderFactory.js';
 
-/**
- * Logger to log messages to the defined appender.</p>
- * Default appender is Appender, which is ignoring all messages. Please
- * use setAppender() to set a specific appender (e.g. WindowAppender).
- * use {@see Log4js#getLogger(String)} to get an instance.
- * @constructor
- * @param name name of category to log to
- * @author Stephan Strittmatter
- */
 export default class Logger {
-	constructor(name) {
+	constructor(category = '') {
 		this.loggingEvents = [];
 		this.appenders = [];
-		/** category of logger */
-		this.category = name || '';
-		/** level to be logged */
-		this.level = Level.FATAL;
-
+		this.category = category;
+		this.level = Level.ERROR;
 		this.dateformat = DEFAULT_DATE_FORMAT;
 
-		this.onlog = new CustomEvent();
-		this.onclear = new CustomEvent();
-
-		/** appender to write in */
-		this.appenders.push(new Appender(this));
-
-		// if multiple log objects are instantiated this will only log to the log
-		// object that is declared last can't seem to get the attachEvent method to
-		// work correctly
-		try {
-			window.onerror = this.windowError.bind(this);
-		} catch (e) {
-			//log4jsLogger.fatal(e);
-		}
+		this.dispatcher = new EventDispatcher();
 	}
 
+	configure(config) {
+		this.configureLevel(config)
+			.configureAppenders(config);
 
-	/**
-	 * add additional appender. DefaultAppender always is there.
-	 * @param appender additional wanted appender
-	 */
-	addAppender(appender) {
-		if (appender instanceof Appender) {
-			appender.setLogger(this);
-			this.appenders.push(appender);
-		} else {
-			throw "Not instance of an Appender: " + appender;
-		}
+		return this;
 	}
 
-	/**
-	 * set Array of appenders. Previous Appenders are cleared and removed.
-	 * @param {Array} appenders Array of Appenders
-	 */
-	setAppenders(appenders) {
-		// clear first all existing appenders
-		for (let i = 0; i < this.appenders.length; i++) {
-			this.appenders[i].doClear();
+	configureLevel(config) {
+		if (config && config.logging) {
+			this.level = Level.toLevel(config.logging.level);
 		}
-
-		this.appenders = appenders;
-
-		for (let j = 0; j < this.appenders.length; j++) {
-			this.appenders[j].setLogger(this);
-		}
+		return this;
 	}
 
+	configureAppenders(config) {
+		if (config && config.logging) {
+			const appenders = createAppenders(config.logging.appenders, config.appenders);
+			appenders.forEach((appender) => {
+				appender.registerLoggingEvents(this);
+				this.appenders.push(appender);
+			});
+		}
+		return this;
+	}
 	/**
 	 * Set the Loglevel default is LogLEvel.TRACE
 	 * @param level wanted logging level
@@ -84,17 +53,22 @@ export default class Logger {
 	 * @private
 	 */
 	log(logLevel, message, exception) {
-		const loggingEvent = new LoggingEvent(this.category, Level.toString(logLevel),
-			message, exception, this);
-		this.loggingEvents.push(loggingEvent);
-		this.onlog.dispatch(loggingEvent);
+		const loggingEvent = new LoggingEvent(
+			this.category,
+			Level.toString(logLevel),
+			message,
+			exception,
+			this
+		);
+
+		this.dispatcher.dispatch('log', loggingEvent);
 	}
 
 	/** clear logging */
 	clear() {
 		try {
 			this.loggingEvents = [];
-			this.onclear.dispatch();
+			this.dispatcher.dispatch('clear');
 		} catch (e) {
 			console.log(e);
 		}
@@ -151,7 +125,6 @@ export default class Logger {
 	 * @param {Throwable} throwable
 	 */
 	info(message, throwable) {
-		debugger;
 		if (this.isInfoEnabled()) {
 			this.log(Level.INFO, message, throwable);
 		}
@@ -200,16 +173,6 @@ export default class Logger {
 		if (this.isFatalEnabled()) {
 			this.log(Level.FATAL, message, throwable);
 		}
-	}
-
-	/**
-	 * Capture main window errors and log as fatal.
-	 * @private
-	 */
-	windowError(msg, url, line) {
-		const message = 'Error in (' + (url || window.location) + ') on line ' +
-			line + ' with message (' + msg + ')';
-		this.log(Level.FATAL, message, null);
 	}
 
 	/**

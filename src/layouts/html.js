@@ -1,5 +1,5 @@
-import Layout from '../layout';
-import { getLevelColorCode } from '../Level';
+import BaseLayout from 'BaseLayout';
+import { getLevelColorCode } from '../level';
 
 /**
  * HtmlLayout write the logs in Html format.
@@ -8,7 +8,7 @@ import { getLevelColorCode } from '../Level';
  * @extends Log4js.Layout
  * @author Stephan Strittmatter
  */
-export default class HtmlLayout extends Layout {
+export default class HtmlLayout extends BaseLayout {
 	/**
 	 * Implement this method to create your own layout format.
 	 * @param {Log4js.LoggingEvent} loggingEvent loggingEvent to format

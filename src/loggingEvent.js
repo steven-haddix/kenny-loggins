@@ -57,10 +57,9 @@ export default class LoggingEvent {
 	 * @see Log4js#setDateFormat()
 	 */
 	getFormattedTimestamp() {
-		if(this.logger) {
+		if (this.logger) {
 			return this.logger.getFormattedTimestamp(this.startTime);
-		} else {
-			return this.startTime.toGMTString();
 		}
+		return this.startTime.toGMTString();
 	}
 }

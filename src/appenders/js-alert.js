@@ -1,5 +1,5 @@
 var SimpleLayout = require('./simple');
-var Appender = require('../appender');
+var Appender = require('appender');
 var helper = require('../helper');
 
 /**

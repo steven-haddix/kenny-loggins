@@ -1,5 +1,6 @@
-import Layout from '../layout';
-import { formatDate } from '../dateFormatter';
+import BaseLayout from './BaseLayout';
+import { formatDate } from '../helpers/dateHelper';
+
 
 export const PatternTypes = {
 	TTCC_CONVERSION_PATTERN:"%r %p %c - %m%n",
@@ -16,7 +17,7 @@ export const PatternTypes = {
  * @extends Log4js.Layout
  * @author Stephan Strittmatter
  */
-export default class PatternLayout extends Layout {
+export default class PatternLayout extends BaseLayout {
 	constructor(pattern) {
 		super();
 

@@ -5,7 +5,7 @@
  * @constructor
  * @author Stephan Strittmatter
  */
-export default class Layout {
+export default class BaseLayout {
 	/**
 	 * Implement this method to create your own layout format.
 	 * @param {LoggingEvent} loggingEvent loggingEvent to format

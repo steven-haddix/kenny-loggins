@@ -4,11 +4,15 @@ module.exports = function(config) {
         // base path, that will be used to resolve files and exclude
         basePath : '.',
 
-        frameworks : ['mocha'],
+        frameworks : [
+            'chai',
+            'mocha',
+            'sinon',
+            'sinon-chai'
+        ],
 
         // list of files / patterns to load in the browser
         files : [
-            'node_modules/chai/chai.js',
             'test/js/unit/**/*.js',
             'test/js/unit/*.js'
             // 'test/functional/**/*.js',
@@ -68,25 +72,26 @@ module.exports = function(config) {
         reportSlowerThan : 5000,
 
         preprocessors : {
-            'test/js/unit/**/*.js': ['webpack'],
-            'test/js/unit/*.js': ['webpack']
+            'test/js/unit/**/*.test.js': ['webpack', 'sourcemap']
         },
 
         plugins : [
-            // 'karma-chrome-launcher',
-            'karma-firefox-launcher',
             'karma-mocha',
             'karma-phantomjs-launcher',
             'karma-spec-reporter',
             'karma-babel-preprocessor',
-            'karma-webpack'
+            'karma-chai',
+            'karma-sinon',
+            'karma-sinon-chai',
+            'karma-webpack',
+            'karma-sourcemap-loader'
         ],
-        // Test webpack config
+
         webpack: require('./webpack.config'),
 
         // Hide webpack build information from output
         webpackMiddleware: {
-            noInfo: true
+            noInfo: false
         }
     });
 };

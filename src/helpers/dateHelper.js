@@ -6,6 +6,29 @@
 export const DEFAULT_DATE_FORMAT = 'yyyy-MM-ddThh:mm:ssO';
 
 /**
+ * @private
+ * @static
+ */
+export function addZero(vNumber) {
+	return ((vNumber < 10) ? '0' : '') + vNumber;
+}
+
+/**
+ * Formates the TimeOffest
+ * Thanks to http://www.svendtofte.com/code/date_format/
+ * @private
+ */
+export function zero(date) {
+	// Difference to Greenwich time (GMT) in hours
+	const os = Math.abs(date.getTimezoneOffset());
+	let h = String(Math.floor(os / 60));
+	let m = String(os % 60);
+	if (h.length === 1) h = '0' + h;
+	if (m.length === 1) m = '0' + m;
+	return date.getTimezoneOffset() < 0 ? '+' + h + m : '-' + h + m;
+}
+
+/**
  * Formats the given date by the given pattern.<br />
  * Following switches are supported:
  * <ul>
@@ -21,7 +44,7 @@ export const DEFAULT_DATE_FORMAT = 'yyyy-MM-ddThh:mm:ssO';
  * @return {String} formatted date string
  * @static
  */
-export function formatDate(vDate, vFormat) {
+export function formatDate(vDate, vFormat = DEFAULT_DATE_FORMAT) {
 	const vDay = addZero(vDate.getDate());
 	const vMonth = addZero(vDate.getMonth() + 1);
 	const vYearLong = addZero(vDate.getFullYear());
@@ -63,27 +86,4 @@ export function formatDate(vDate, vFormat) {
 	let vDateString = vFormat.replace(/dd/g, vDay).replace(/MM/g, vMonth).replace(/y{1,4}/g, vYear);
 	vDateString = vDateString.replace(/hh/g, vHour).replace(/mm/g, vMinute).replace(/ss/g, vSecond);
 	return vDateString;
-}
-
-/**
- * @private
- * @static
- */
-export function addZero(vNumber) {
-  return ((vNumber < 10) ? '0' : '') + vNumber;
-}
-
-/**
- * Formates the TimeOffest
- * Thanks to http://www.svendtofte.com/code/date_format/
- * @private
- */
-export function zero(date) {
-	// Difference to Greenwich time (GMT) in hours
-	const os = Math.abs(date.getTimezoneOffset());
-	let h = String(Math.floor(os / 60));
-	let m = String(os % 60);
-	if (h.length === 1) h = '0' + h;
-	if (m.length === 1) m = '0' + m;
-	return date.getTimezoneOffset() < 0 ? '+' + h + m : '-' + h + m;
 }
