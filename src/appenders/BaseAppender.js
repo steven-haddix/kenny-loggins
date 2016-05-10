@@ -20,36 +20,17 @@ export default class BaseAppender {
 
 	/**
 	 * Event handler for log events
-	 * @param loggingEvent - Logging event for appender to process
      */
-	onLogEventHandler(loggingEvent) {
-		this.doAppend(loggingEvent);
-	}
-
-	/**
-	 * Event handler for clearing log events
-	 * FIXME: determine if queue needed in base appender.
-	 */
-	onClearEventHandler() {
-		// this.queue.clearQueue();
+	onLogEventHandler(message, payload) {
+		this.doAppend(payload);
 	}
 
 	/**
 	 * Registers appender events with the EventLogDispatcher
 	 * @param {Logger} logger to register events with
 	 */
-	registerLoggingEvents(logger) {
-		// add listener to the logger methods
-		logger.dispatcher.register({
-			eventType: 'log',
-			callback: this.onLogEventHandler.bind(this)
-		});
-
-		/* logger.EventLogDispatcher.register({
-			eventType: 'onClear',
-			callback: bind(this.onClearEventHandler, this)
-		}); */
-
+	subscribeLoggingEvents(logger) {
+		logger.subscribe(this.onLogEventHandler.bind(this));
 		return this;
 	}
 }
