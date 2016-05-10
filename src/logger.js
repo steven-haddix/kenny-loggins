@@ -1,7 +1,6 @@
-import Appender from './appenders/BaseAppender';
 import { DEFAULT_DATE_FORMAT, formatDate } from './helpers/dateHelper';
 import LoggingEvent from './LoggingEvent';
-import EventDispatcher from './EventDispatcher';
+import PubSub from './PubSub';
 import { Level, getLevelFromText } from './level';
 import { createAppenders } from './appenderFactory.js';
 
@@ -13,7 +12,7 @@ export default class Logger {
 		this.level = Level.ERROR;
 		this.dateformat = DEFAULT_DATE_FORMAT;
 
-		this.dispatcher = new EventDispatcher();
+		this.pubsub = new PubSub();
 	}
 
 	configure(config) {
@@ -34,7 +33,7 @@ export default class Logger {
 		if (config && config.logging) {
 			const appenders = createAppenders(config.logging.appenders, config.appenders);
 			appenders.forEach((appender) => {
-				appender.registerLoggingEvents(this);
+				appender.subscribeLoggingEvents(this);
 				this.appenders.push(appender);
 			});
 		}
@@ -46,6 +45,10 @@ export default class Logger {
 	 */
 	setLevel(level) {
 		this.level = level;
+	}
+
+	subscribe(callback) {
+		this.pubsub.subscribe('log', callback);
 	}
 
 	/**
@@ -61,7 +64,7 @@ export default class Logger {
 			this
 		);
 
-		this.dispatcher.dispatch('log', loggingEvent);
+		this.pubsub.publish('log', loggingEvent);
 	}
 
 	/** clear logging */
