@@ -1,4 +1,4 @@
-import { formatUTCDate } from '../helpers/dateHelper';
+import { formatUTCDate } from '../../helpers/dateHelper';
 
 // TODO: Refactor this block of code.
 function formatMessage(message) {

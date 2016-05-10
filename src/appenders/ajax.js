@@ -1,7 +1,7 @@
 import BaseAppender from './BaseAppender';
 import Client from './client/Client';
 import { defaults, injectConfig } from './config/defaults';
-import format from '../layouts/json';
+import format from './layouts/json';
 
 export default class AjaxAppender extends BaseAppender {
 	constructor(config) {
