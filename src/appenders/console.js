@@ -7,11 +7,13 @@ import { defaults, injectConfig } from './config/defaults';
 export default class ConsoleAppender extends BaseAppender {
 	constructor(config) {
 		super(config);
-		// TODO: There's probably a better way to implement this.
+
+		// FIXME: There's probably a better way to implement configurations.
 		injectConfig(this, defaults.console, config);
 	}
 
 	doAppend(loggingEvent) {
-		console.log(this.layout.format(loggingEvent));
+		// TODO: layout should be configurable
+		console.log(this.layout(loggingEvent));
 	}
 }

@@ -2,6 +2,7 @@ import BaseAppender from './BaseAppender';
 import format from '../layouts/simple';
 import { Level } from '../level';
 
+// FIXME: Refactor all of this code
 /**
  * Appender writes the logs to the JavaScript console of Mozilla browser
  * More infos: http://kb.mozillazine.org/index.php?title=JavaScript_Console&redirect=no
@@ -11,7 +12,6 @@ import { Level } from '../level';
  * @param logger log4js instance this appender is attached to
  * @author Stephan Strittmatter
  */
-// TODO: Refactor all of this code
 class MozillaJSConsoleAppender extends BaseAppender {
 	constructor() {
 		super();

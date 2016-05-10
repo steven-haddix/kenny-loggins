@@ -1,21 +1,17 @@
-/**
- * Created by shadd01 on 4/19/16.
- */
-
 export const defaults = {
     ajax: {
         interval: 30000,
         threshold: 1,
         url: 'http://localhost:3000/api/log',
-        layout: 'simple'
+        layout: ''
     },
     console: {
         threshold: 1,
-        layout: 'simple'
+        layout: ''
     },
     browser: {
         threshold: 1,
-        layout: 'simple'
+        layout: ''
     },
     getDefaultConfig(appenderType) {
         switch (appenderType) {
