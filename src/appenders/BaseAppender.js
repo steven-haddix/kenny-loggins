@@ -2,10 +2,6 @@ import { defaults, injectConfig } from './config/defaults';
 
 /**
  * Abstract base class for other appenders.
- *
- * @constructor
- * @param config - Configuration from class extending base appender.
- * @author Steven Haddix
  */
 export default class BaseAppender {
 	constructor(config) {
@@ -14,7 +10,7 @@ export default class BaseAppender {
 
 	/**
 	 * appends the given loggingEvent appender specific
-	 * @param {Log4js.LoggingEvent} loggingEvent loggingEvent to append
+	 * @param {LoggingEvent} loggingEvent to append
 	 */
 	doAppend() {}
 
@@ -26,8 +22,8 @@ export default class BaseAppender {
 	}
 
 	/**
-	 * Registers appender events with the EventLogDispatcher
-	 * @param {Logger} logger to register events with
+	 * Subscribes to logger events
+	 * @param {Logger} logger to subscribe to
 	 */
 	subscribeLoggingEvents(logger) {
 		logger.subscribe(this.onLogEventHandler.bind(this));

@@ -1,4 +1,3 @@
-
 export default class Helper {
     static bind(fn, object) {
         return () => fn.apply(object, arguments);

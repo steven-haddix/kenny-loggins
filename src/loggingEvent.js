@@ -2,9 +2,9 @@
  * Models a logging event.
  * @constructor
  * @param {String} categoryName name of category
- * @param {Log4js.Level} level level of message
+ * @param {Level} level level of message
  * @param {String} message message to log
- * @param {Log4js.Logger} logger the associated logger
+ * @param {Logger} logger the associated logger
  * @author Seth Chisamore
  */
 export default class LoggingEvent {
@@ -35,13 +35,13 @@ export default class LoggingEvent {
 		this.exception = exception;
 		/**
 		 * level of log
-		 * @type Log4js.Level
+		 * @type Level
 		 * @private
 		 */
 		this.level = level;
 		/**
 		 * reference to logger
-		 * @type Log4js.Logger
+		 * @type Logger
 		 * @private
 		 */
 		this.logger = logger;
@@ -54,7 +54,6 @@ export default class LoggingEvent {
 	/**
 	 * get the timestamp formatted as String.
 	 * @return {String} formatted timestamp
-	 * @see Log4js#setDateFormat()
 	 */
 	getFormattedTimestamp() {
 		if (this.logger) {

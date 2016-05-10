@@ -1,6 +1,3 @@
-/**
- * Level Enumeration.
- */
 export const Level = {
 	OFF: Number.MAX_VALUE,
 	FATAL: 50000,
