@@ -27,6 +27,6 @@ export const defaults = {
     }
 };
 
-export function injectConfig(context, defaultConfig, newConfig) {
+export function configure(context, defaultConfig, newConfig) {
     Object.assign(context, defaultConfig, newConfig);
 }

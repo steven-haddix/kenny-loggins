@@ -1,13 +1,13 @@
 import BaseAppender from './BaseAppender';
 import format from './layouts/simple';
-import { defaults, injectConfig } from './config/defaults';
+import { defaults, configure } from './config/defaults';
 
 export default class ConsoleAppender extends BaseAppender {
 	constructor(config) {
 		super(config);
 
 		// FIXME: There's probably a better way to implement configurations.
-		injectConfig(this, defaults.console, config);
+		configure(this, defaults.console, config);
 	}
 
 	doAppend(loggingEvent) {

@@ -1,11 +1,11 @@
-import { defaults, injectConfig } from './config/defaults';
+import { defaults, configure } from './config/defaults';
 
 /**
  * Abstract base class for other appenders.
  */
 export default class BaseAppender {
 	constructor(config) {
-		injectConfig(this, {}, config);
+		configure(this, {}, config);
 	}
 
 	/**

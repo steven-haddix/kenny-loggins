@@ -1,13 +1,13 @@
 import BaseAppender from './BaseAppender';
 import Client from './client/Client';
-import { defaults, injectConfig } from './config/defaults';
+import { defaults, configure } from './config/defaults';
 import format from './layouts/json';
 
 export default class AjaxAppender extends BaseAppender {
 	constructor(config) {
 		super(config);
 		// FIXME: There's probably a better way to implement configurations.
-		injectConfig(this, defaults.ajax, config);
+		configure(this, defaults.ajax, config);
 		this.client = new Client();
 	}
 
