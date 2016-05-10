@@ -40,7 +40,7 @@ describe('Logger', () => {
   })
 
   it('dispatches logging events', () => {
-    const spy = expect.spyOn(logger.dispatcher, 'dispatch');
+    const spy = expect.spyOn(logger.pubsub, 'publish');
     const error = new Error();
     const loggingEvent = new LoggingEvent(
         'Test',
