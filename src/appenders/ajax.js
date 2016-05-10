@@ -6,8 +6,9 @@ import format from '../layouts/json';
 export default class AjaxAppender extends BaseAppender {
 	constructor(config) {
 		super(config);
-		// TODO: There's probably a better way to implement this.
+		// FIXME: There's probably a better way to implement configurations.
 		injectConfig(this, defaults.ajax, config);
+		this.client = new Client();
 	}
 
 	/**
@@ -15,7 +16,8 @@ export default class AjaxAppender extends BaseAppender {
 	 * @param loggingEvent event to be logged
 	 */
 	doAppend(loggingEvent) {
-		return this.send(format(loggingEvent));
+		// TODO: layout should be configurable
+		this.send(format(loggingEvent));
 	}
 
 	/**
@@ -31,10 +33,13 @@ export default class AjaxAppender extends BaseAppender {
 	 * send the request.
 	 */
 	send(request) {
-		// TODO: figure out how to handle client responses.
-		return new Client().postRequest(this.url, null, request)
-			.then((res) => console.log(res))
-			.catch((err) => console.log(err));
+		this.client
+			.postRequest(this.url, null, request)
+			.then(
+				// TODO: determine what to do with client responses.
+				(res) => console.log(res),
+				(err) => console.log(err)
+			);
 	}
 
 	/**
