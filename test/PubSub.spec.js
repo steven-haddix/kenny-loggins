@@ -18,8 +18,20 @@ describe('PubSub', () => {
     })
 
     it('can be subscribed to', () => {
+        pubsub.subscribe('log', () => {});
+        expect(Object.keys(pubsub.messages['log']).length).toBe(1);
+    })
+
+    it('can be unsubscribed from with token', () => {
+        var token = pubsub.subscribe('log', () => {});
+        pubsub.unsubscribe(token);
+        expect(Object.keys(pubsub.messages['log']).length).toBe(0);
+    })
+
+    it('can be unsubscribed from with method', () => {
         pubsub.subscribe('log', callbackSpy);
-        expect(pubsub.messages['log']).toExist();
+        pubsub.unsubscribe(callbackSpy);
+        expect(Object.keys(pubsub.messages['log']).length).toBe(0);
     })
 
     it('publishes to subscribed methods', () => {

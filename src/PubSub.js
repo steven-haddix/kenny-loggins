@@ -1,3 +1,5 @@
+import Helper from './helpers/helper';
+
 export default class PubSub {
     constructor() {
         this.messages = {};
@@ -71,17 +73,6 @@ export default class PubSub {
     }
 
     messageHasSubscribers(message) {
-        return PubSub.hasKeys(this.messages[message]);
-    }
-
-    static hasKeys(obj) {
-        let key;
-
-        for (key in obj) {
-            if (obj.hasOwnProperty(key)) {
-                return true;
-            }
-        }
-        return false;
+        return Helper.hasKeys(this.messages[message]);
     }
 }
