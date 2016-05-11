@@ -1,7 +1,7 @@
 import Logger from '../src/Logger';
 import { Level } from '../src/level';
 import LoggingEvent from '../src/LoggingEvent';
-import expect, { spyOn } from 'expect'
+import expect, { spyOn } from 'expect';
 
 describe('Logger', () => {
   let logger;
