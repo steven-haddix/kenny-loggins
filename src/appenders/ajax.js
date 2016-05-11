@@ -33,13 +33,13 @@ export default class AjaxAppender extends BaseAppender {
 	 * send the request.
 	 */
 	send(request) {
-		this.client
-			.postRequest(this.url, null, request)
-			.then(
-				// TODO: determine what to do with client responses.
-				(res) => console.log(res),
-				(err) => console.log(err)
-			);
+		return this.client
+					.postRequest(this.url, null, request)
+					.then(
+						// TODO: determine what to do with client responses.
+						() => {},
+						() => {}
+					);
 	}
 
 	/**

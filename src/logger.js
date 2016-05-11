@@ -33,12 +33,14 @@ export default class Logger {
 		if (config && config.logging) {
 			const appenders = createAppenders(config.logging.appenders, config.appenders);
 			appenders.forEach((appender) => {
-				appender.subscribeLoggingEvents(this);
-				this.appenders.push(appender);
+				if (appender.subscribeToLogger(this)) {
+					this.appenders.push(appender);
+				}
 			});
 		}
 		return this;
 	}
+
 	/**
 	 * Set the Loglevel default is LogLEvel.TRACE
 	 * @param level wanted logging level
@@ -47,8 +49,12 @@ export default class Logger {
 		this.level = level;
 	}
 
-	subscribe(callback) {
-		this.pubsub.subscribe('log', callback);
+	subscribe(message, callback) {
+		return this.pubsub.subscribe(message, callback);
+	}
+
+	unsubscribe(token) {
+		return this.pubsub.unsubscribe(token);
 	}
 
 	/**
