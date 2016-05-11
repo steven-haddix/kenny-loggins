@@ -1,7 +1,13 @@
 import Logger from './Logger';
 
 export default class KennyLoggins {
-	constructor() {
+	constructor(debugMode = false) {
+		/**
+		 * Is environment production?
+		 * @type {boolean}
+         */
+		this.debugMode = debugMode;
+
 		/**
 		 * Current version of log4js.
 		 * @static
@@ -17,7 +23,7 @@ export default class KennyLoggins {
 		this.applicationStartDate = new Date();
 
 		/**
-		 * Hashtable of loggers.
+		 * Object of loggers.
 		 * @static
 		 * @final
 		 * @private
@@ -33,40 +39,49 @@ export default class KennyLoggins {
 	 * @static
 	 */
 	getLogger(name) {
-		if (typeof name !== 'string') {
-			name = '[default]';
-		}
+		try {
+			if (typeof name !== 'string') {
+				name = '[default]';
+			}
 
-		if (!this.loggers[name]) {
-			// Create the logger for this name if it doesn't already exist
-			this.loggers[name] = new Logger(name);
-		}
+			if (!this.loggers[name]) {
+				// Create the logger for this name if it doesn't already exist
+				const logger = new Logger(name);
 
-		return this.loggers[name];
+				if (!this.debugMode) {
+					this.productionize(logger);
+				}
+
+				this.loggers[name] = logger;
+			}
+
+			return this.loggers[name];
+		} catch (ex) {
+			// continue regardless of error
+		}
 	}
 
-	/**
-	 * Get the default logger instance.
-	 * @return {Logger} instance of default logger
-	 * @static
-	 */
-	getDefaultLogger() {
-		return this.getLogger('[default]');
-	}
+	productionize(object) {
+		let name;
+		let method;
 
-	/**
-	 * Atatch an observer function to an elements event browser independent.
-	 *
-	 * @param element element to attach event
-	 * @param name name of event
-	 * @param observer observer method to be called
-	 * @private
-	 */
-	attachEvent(element, name, observer) {
-		if (element.addEventListener) { // DOM event model
-			element.addEventListener(name, observer, false);
-		} else if (element.attachEvent) { // M$ event model
-			element.attachEvent('on' + name, observer);
+		const wrapper = function wrapper(n, m) {
+			return () => {
+				try {
+					return m.apply(this, arguments);
+				} catch (ex) {
+					// continue regardless of error
+				}
+			};
+		};
+
+		for (name in object) {
+			if (object.hasOwnProperty(name)) {
+				method = object[name];
+				if (typeof method === 'function') {
+					object[name] = wrapper(name, method);
+				}
+			}
 		}
 	}
 }
