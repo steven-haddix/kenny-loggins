@@ -26,7 +26,7 @@ describe('Kenny Loggins', () => {
     it('assures production logger swallows exceptions', () => {
         logger['bomb'] = () => {
             throw new Error('Boom!');
-        };;
+        };
 
         loggins.productionize(logger);
 
