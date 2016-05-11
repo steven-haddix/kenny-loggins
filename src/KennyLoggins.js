@@ -3,17 +3,10 @@ import Logger from './Logger';
 export default class KennyLoggins {
 	constructor(debugMode = false) {
 		/**
-		 * Is environment production?
+		 * Whether to run debug mode
 		 * @type {boolean}
          */
 		this.debugMode = debugMode;
-
-		/**
-		 * Current version of log4js.
-		 * @static
-		 * @final
-		 */
-		this.version = '1.0.0';
 
 		/**
 		 * Date of logger initialized.
@@ -31,6 +24,21 @@ export default class KennyLoggins {
 		this.loggers = {};
 	}
 
+	configure(configs) {
+		if (Array.isArray(configs)) {
+			return false;
+		}
+
+		configs.forEach((config) => {
+			try {
+				this.getLogger(config.name).configure(config);
+			} catch (ex) {
+				// continue regardless of error
+			}
+		});
+
+		return true;
+	}
 
 	/**
 	 * Get a logger instance. Instance is cached on categoryName level.
