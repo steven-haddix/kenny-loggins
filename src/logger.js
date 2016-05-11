@@ -6,7 +6,6 @@ import { createAppenders } from './appenderFactory.js';
 
 export default class Logger {
 	constructor(category = '') {
-		this.loggingEvents = [];
 		this.appenders = [];
 		this.category = category;
 		this.level = Level.ERROR;
@@ -16,24 +15,35 @@ export default class Logger {
 	}
 
 	configure(config) {
-		this.configureLevel(config)
-			.configureAppenders(config);
-
+		this.configureLevel(config).configureAppenders(config);
 		return this;
 	}
 
+	/**
+	 * Configures the log level
+	 * @param {Object} config - Object that contains log level
+	 * @returns {Logger} returns self to allow for chaining
+     */
 	configureLevel(config) {
-		if (config && config.logging) {
-			this.level = Level.toLevel(config.logging.level);
+		if (config && config.level) {
+			this.setLevel(Level.toLevel(config.level));
 		}
 		return this;
 	}
 
+	/**
+	 * Loops through array of appenders, subscribes them to logger, and adds
+	 * them to a local list of appenders.
+	 * @param {Object} config - Object that contains an array of appenders
+	 * @returns {Logger} returns self to allow for chaining
+     */
 	configureAppenders(config) {
-		if (config && config.logging) {
-			const appenders = createAppenders(config.logging.appenders, config.appenders);
-			appenders.forEach((appender) => {
-				if (appender.subscribeToLogger(this)) {
+		if (config && Array.isArray(config.appenders)) {
+			// const appenders = createAppenders(config.appenders, config.appenders);
+			config.appenders.forEach((appender) => {
+				if (typeof appender === 'function' &&
+						typeof appender.subscribeToLogger === 'function' &&
+						appender.subscribeToLogger(this)) {
 					this.appenders.push(appender);
 				}
 			});
@@ -42,17 +52,20 @@ export default class Logger {
 	}
 
 	/**
-	 * Set the Loglevel default is LogLEvel.TRACE
-	 * @param level wanted logging level
-	 */
-	setLevel(level) {
-		this.level = level;
-	}
-
+	 * Makes pubsub.subscribe available to appenders
+	 * @param message
+	 * @param callback
+	 * @returns {boolean}
+     */
 	subscribe(message, callback) {
 		return this.pubsub.subscribe(message, callback);
 	}
 
+	/**
+	 * Makes pubsub.unsubscribe available to appenders
+	 * @param token
+	 * @returns {boolean}
+	 */
 	unsubscribe(token) {
 		return this.pubsub.unsubscribe(token);
 	}
@@ -69,7 +82,6 @@ export default class Logger {
 			exception,
 			this
 		);
-
 		this.pubsub.publish('log', loggingEvent);
 	}
 
@@ -182,6 +194,14 @@ export default class Logger {
 		if (this.isFatalEnabled()) {
 			this.log(Level.FATAL, message, throwable);
 		}
+	}
+
+	/**
+	 * Set the Loglevel default is LogLEvel.TRACE
+	 * @param level wanted logging level
+	 */
+	setLevel(level) {
+		this.level = level;
 	}
 
 	/**

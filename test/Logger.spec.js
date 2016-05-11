@@ -28,8 +28,14 @@ describe('Logger', () => {
   it('configures log level', () => {
     const spy = expect.spyOn(Level, 'toLevel');
 
-    expect(logger.configureLevel({ logging: { level: 'warn' }})).toEqual(logger);
+    expect(logger.configureLevel({ level: 'warn' })).toEqual(logger);
     expect(spy).toHaveBeenCalledWith('warn');
+  })
+
+  it('handles incorrect appender configurations', () => {
+    expect(logger.configureAppenders(null)).toEqual(logger);
+    expect(logger.configureAppenders({stuff: ""})).toEqual(logger);
+    expect(logger.configureAppenders({appenders: [()=>{}]})).toEqual(logger);
   })
 
   it('uses default logging level if none is provided', () => {
