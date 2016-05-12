@@ -1,4 +1,4 @@
-import Ajax from './appenders/Ajax';
+import Ajax from './appenders/ajax';
 import ConsoleAppender from './appenders/Console';
 import { findFirstElementByName } from './helpers/find';
 
