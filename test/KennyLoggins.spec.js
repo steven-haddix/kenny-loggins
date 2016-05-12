@@ -2,7 +2,7 @@
  * Created by shadd01 on 5/11/16.
  */
 import KennyLoggins from '../src/KennyLoggins';
-import Logger from '../src/Logger';
+import Logger from '../src/logger';
 import expect, { spyOn } from 'expect'
 
 describe('Kenny Loggins', () => {

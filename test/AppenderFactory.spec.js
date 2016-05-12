@@ -1,7 +1,7 @@
 /**
  * Created by shadd01 on 5/9/16.
  */
-import Logger from '../src/Logger';
+import Logger from '../src/logger';
 import { create, createAppenders, appenderTypes } from '../src/AppenderFactory';
 import AjaxAppender from '../src/appenders/Ajax';
 import ConsoleAppender from '../src/appenders/Console';
