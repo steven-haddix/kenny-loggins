@@ -1,6 +1,6 @@
-import Logger from '../src/Logger';
+import Logger from '../src/logger';
 import { Level } from '../src/level';
-import LoggingEvent from '../src/LoggingEvent';
+import LoggingEvent from '../src/loggingEvent';
 import expect, { spyOn } from 'expect';
 
 describe('Logger', () => {
