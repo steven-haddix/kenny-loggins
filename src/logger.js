@@ -2,7 +2,6 @@ import { DEFAULT_DATE_FORMAT, formatDate } from './helpers/dateHelper';
 import LoggingEvent from './loggingEvent';
 import PubSub from './PubSub';
 import { Level, getLevelFromText } from './level';
-import { createAppenders } from './appenderFactory.js';
 
 export default class Logger {
 	constructor(category = '') {

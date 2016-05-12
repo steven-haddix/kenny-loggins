@@ -1,4 +1,4 @@
-import Logger from './Logger';
+import Logger from './logger';
 
 export default class KennyLoggins {
 	constructor(debugMode = false) {
