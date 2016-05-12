@@ -2,7 +2,6 @@
   "name": "kenny-loggins",
   "title": "Kenny Loggins",
   "description": "The logging library that has your back in the danger zone!",
-  "version": "1.0.0",
   "main": "lib/index.js",
   "authors": "",
   "private": true,
