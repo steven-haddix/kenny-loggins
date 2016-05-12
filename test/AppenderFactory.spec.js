@@ -4,7 +4,7 @@
 import Logger from '../src/logger';
 import { create, createAppenders, appenderTypes } from '../src/AppenderFactory';
 import AjaxAppender from '../src/appenders/ajax';
-import ConsoleAppender from '../src/appenders/Console';
+import ConsoleAppender from '../src/appenders/console';
 import expect, { spyOn } from 'expect'
 
 describe('Appender Factory', () => {

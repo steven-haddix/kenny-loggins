@@ -1,5 +1,5 @@
 import Ajax from './appenders/ajax';
-import ConsoleAppender from './appenders/Console';
+import ConsoleAppender from './appenders/console';
 import { findFirstElementByName } from './helpers/find';
 
 const Appenders = [Ajax, ConsoleAppender];

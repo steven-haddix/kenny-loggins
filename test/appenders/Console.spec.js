@@ -1,4 +1,4 @@
-import ConsoleAppender from '../../src/appenders/Console';
+import ConsoleAppender from '../../src/appenders/console';
 import expect, { spyOn } from 'expect'
 
 describe('Appenders', () => {
