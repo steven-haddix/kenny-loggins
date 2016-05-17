@@ -1,4 +1,4 @@
-import Logger from '../src/logger';
+import Logger from '../src/Logger';
 import { Level } from '../src/level';
 import LoggingEvent from '../src/loggingEvent';
 import expect, { spyOn } from 'expect';
