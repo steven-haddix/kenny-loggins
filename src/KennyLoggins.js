@@ -82,7 +82,7 @@ export default class KennyLoggins {
 			const logger = this.getLoggerByPattern(name);
 
 			if (logger) {
-				return logger;
+				return logger.logger;
 			}
 
 			return this.getDefaultLogger();
