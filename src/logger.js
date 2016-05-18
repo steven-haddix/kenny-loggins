@@ -4,9 +4,9 @@ import PubSub from './PubSub';
 import { Level, getLevelFromText } from './level';
 
 export default class Logger {
-	constructor(category = '') {
+	constructor(name = '') {
 		this.appenders = [];
-		this.category = category;
+		this.name = name;
 		this.level = Level.ERROR;
 		this.dateformat = DEFAULT_DATE_FORMAT;
 
@@ -75,7 +75,7 @@ export default class Logger {
 	 */
 	log(logLevel, message, exception) {
 		const loggingEvent = new LoggingEvent(
-			this.category,
+			this.name,
 			Level.toString(logLevel),
 			message,
 			exception,
