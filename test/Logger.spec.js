@@ -1,4 +1,5 @@
 import Logger from '../src/Logger';
+import ConsoleAppender from '../src/appenders/Console';
 import { Level } from '../src/level';
 import LoggingEvent from '../src/loggingEvent';
 import expect, { spyOn } from 'expect';
@@ -26,16 +27,25 @@ describe('Logger', () => {
   })
 
   it('configures log level', () => {
-    const spy = expect.spyOn(Level, 'toLevel');
+    const spy = expect.spyOn(logger, 'setLevel');
 
-    expect(logger.configureLevel({ level: 'warn' })).toEqual(logger);
-    expect(spy).toHaveBeenCalledWith('warn');
+    expect(logger.configureLevel({ level: Level.WARN })).toEqual(logger);
+    expect(spy).toHaveBeenCalledWith(Level.WARN);
   })
 
   it('handles incorrect appender configurations', () => {
     expect(logger.configureAppenders(null)).toEqual(logger);
     expect(logger.configureAppenders({stuff: ""})).toEqual(logger);
     expect(logger.configureAppenders({appenders: [()=>{}]})).toEqual(logger);
+  })
+
+  it('subscribes appenders passed in from configuration', () => {
+    var consoleAppender = new ConsoleAppender();
+    var subscribeSpy = expect.spyOn(consoleAppender, 'subscribeToLogger').andCallThrough();
+    logger.configureAppenders({appenders: [consoleAppender]});
+
+    expect(logger.appenders.length).toEqual(1);
+    expect(subscribeSpy).toHaveBeenCalledWith(logger);
   })
 
   it('uses default logging level if none is provided', () => {

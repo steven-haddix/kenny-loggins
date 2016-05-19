@@ -112,13 +112,13 @@ export default class KennyLoggins {
 	}
 
 	getDefaultLogger() {
-		let defaultLogger = this.getLoggerByName('default');
+		const defaultLogger = this.getLoggerByName('default');
 
-		if (!defaultLogger) {
-			defaultLogger = this.createLogger('default');
+		if (defaultLogger) {
+			return defaultLogger.logger;
 		}
 
-		return defaultLogger;
+		return this.createLogger('default');
 	}
 
 	getLoggerByPattern(name) {

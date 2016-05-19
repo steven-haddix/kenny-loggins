@@ -29,13 +29,14 @@ export default class BaseAppender {
 	 */
 	subscribeToLogger(logger) {
 		if (typeof logger.subscribe !== 'function') {
-			return true;
+			return false;
 		}
 
 		const token = logger.subscribe('log', this.onLogEventHandler.bind(this));
 
 		if (token) {
 			this.tokens.push({ log: token });
+			return true;
 		}
 
 		return false;
