@@ -17,12 +17,12 @@ export default class Client {
         }
     }
 
-    postRequest(url, queryString, postParams, timeout = 5000) {
+    postRequest(url, queryString, postParams, timeout = 5000, contentType = 'application/json') {
         return request.post(url)
                 .use(this.legacyIESupportWrapper)
                 .timeout(timeout)
                 .query(queryString)
-                .set('Content-Type', 'application/json')
+                .set('Content-Type', contentType)
                 .set('Accept', 'application/json')
                 .send(postParams);
     }

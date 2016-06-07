@@ -34,7 +34,7 @@ export default class AjaxAppender extends BaseAppender {
 	 */
 	send(request) {
 		return this.client
-					.postRequest(this.url, null, request)
+					.postRequest(this.url, null, request, null, this.contentType)
 					.then(
 						// TODO: determine what to do with client responses.
 						() => {},
