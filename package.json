@@ -4,7 +4,6 @@
   "description": "The logging library that has your back in the danger zone!",
   "main": "lib/index.js",
   "authors": "",
-  "private": true,
   "repository": {
     "type": "git",
     "url": "git@gitlab:wms/kennyloggins.git"
