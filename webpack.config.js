@@ -14,7 +14,7 @@ const PATHS = {
 var common = {
     module: {
         loaders: [{
-            loaders: ['babel-loader'],
+            loaders: ['uglify','babel-loader'],
             exclude: /node_modules/
         }]
     },
@@ -34,6 +34,7 @@ if(TARGET === 'build') {
         },
         plugins: [
             new webpack.optimize.OccurenceOrderPlugin()
+
         ]
     })
 }

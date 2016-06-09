@@ -2,6 +2,7 @@ export const defaults = {
     ajax: {
         interval: 30000,
         threshold: 1,
+        contentType: 'application/json',
         url: 'http://localhost:3000/api/log',
         layout: ''
     },

@@ -1,4 +1,4 @@
-import Logger from './logger';
+import Logger from './Logger';
 
 export default class KennyLoggins {
 	constructor(debugMode = false) {
@@ -16,57 +16,135 @@ export default class KennyLoggins {
 		this.applicationStartDate = new Date();
 
 		/**
-		 * Object of loggers.
+		 * Array of loggers.
 		 * @static
 		 * @final
 		 * @private
 		 */
-		this.loggers = {};
+		this.loggers = [];
 	}
 
+	/**
+	 * Takes an array of configuration objects and creates loggers for each one.
+	 * Order of configurations matter as the first matching configuration is
+	 * returned when doing getLogger().
+	 *
+	 * Example Config:
+	 * [{
+	 * 		name: 'common.services.orders'
+	 * 		appenders: [new ConsoleAppender(), new AjaxAppender()]
+	 * 	},
+	 * 	{
+	 * 		pattern: '^common'
+	 * 		appenders: [new ConsoleAppender()]
+	 * }]
+	 *
+	 * @param configs
+	 * @returns {KennyLoggins}
+     */
 	configure(configs) {
-		if (Array.isArray(configs)) {
-			return false;
+		if (!Array.isArray(configs)) {
+			return this;
 		}
 
 		configs.forEach((config) => {
 			try {
-				this.getLogger(config.name).configure(config);
+				let name = '';
+
+				if (config.pattern) {
+					name = config.pattern;
+				} else if (config.name) {
+					name = config.name;
+				}
+
+				let logger = this.getLoggerByName(name);
+
+				if (!logger) {
+					logger = this.createLogger(name);
+				}
+
+				return logger.configure(config);
 			} catch (ex) {
 				// continue regardless of error
 			}
 		});
 
-		return true;
+		return this;
 	}
 
 	/**
 	 * Get a logger instance. Instance is cached on categoryName level.
-	 * @param  {Object} name of category to log to.
+	 * @param  {String} name of logger to return.
 	 * @return {Logger} instance of logger for the category
-	 * @static
 	 */
 	getLogger(name) {
 		try {
-			if (typeof name !== 'string') {
-				name = '[default]';
+			const logger = this.getLoggerByPattern(name);
+
+			if (logger) {
+				return logger.logger;
 			}
 
-			if (!this.loggers[name]) {
-				// Create the logger for this name if it doesn't already exist
-				const logger = new Logger(name);
-
-				if (!this.debugMode) {
-					this.productionize(logger);
-				}
-
-				this.loggers[name] = logger;
-			}
-
-			return this.loggers[name];
+			return this.getDefaultLogger();
 		} catch (ex) {
 			// continue regardless of error
 		}
+	}
+
+	/**
+	 * Function for creating new loggers. Adds new logger to list of logger instances.
+	 * @param {string} name
+ 	 * @returns {Logger}
+     */
+	createLogger(name) {
+		const logger = new Logger(name);
+
+		if (!this.debugMode) {
+			this.productionize(logger);
+		}
+
+		this.loggers.push({
+			name,
+			logger
+		});
+
+		return logger;
+	}
+
+	getDefaultLogger() {
+		const defaultLogger = this.getLoggerByName('default');
+
+		if (defaultLogger) {
+			return defaultLogger.logger;
+		}
+
+		return this.createLogger('default');
+	}
+
+	getLoggerByPattern(name) {
+		let isFound = false;
+		let logger;
+
+		this.loggers.forEach((l) => {
+			if (!isFound && this.regex(l.name, name)) {
+				isFound = true;
+				logger = l;
+			}
+		});
+
+		return logger;
+	}
+
+	getLoggerByName(name) {
+		let logger;
+
+		this.loggers.forEach((l) => {
+			if (l.name === name) {
+				logger = l;
+			}
+		});
+
+		return logger;
 	}
 
 	productionize(object) {
@@ -91,5 +169,13 @@ export default class KennyLoggins {
 				}
 			}
 		}
+	}
+
+	regex(regx, str) {
+		if (new RegExp(regx).exec(str)) {
+			return true;
+		}
+
+		return false;
 	}
 }

@@ -4,9 +4,9 @@ import PubSub from './PubSub';
 import { Level, getLevelFromText } from './level';
 
 export default class Logger {
-	constructor(category = '') {
+	constructor(name = '') {
 		this.appenders = [];
-		this.category = category;
+		this.name = name;
 		this.level = Level.ERROR;
 		this.dateformat = DEFAULT_DATE_FORMAT;
 
@@ -24,8 +24,8 @@ export default class Logger {
 	 * @returns {Logger} returns self to allow for chaining
      */
 	configureLevel(config) {
-		if (config && config.level) {
-			this.setLevel(Level.toLevel(config.level));
+		if (config && config.level && typeof config.level === 'number') {
+			this.setLevel(config.level);
 		}
 		return this;
 	}
@@ -40,9 +40,10 @@ export default class Logger {
 		if (config && Array.isArray(config.appenders)) {
 			// const appenders = createAppenders(config.appenders, config.appenders);
 			config.appenders.forEach((appender) => {
-				if (typeof appender === 'function' &&
+				if (typeof appender === 'object' &&
 						typeof appender.subscribeToLogger === 'function' &&
 						appender.subscribeToLogger(this)) {
+
 					this.appenders.push(appender);
 				}
 			});
@@ -75,7 +76,7 @@ export default class Logger {
 	 */
 	log(logLevel, message, exception) {
 		const loggingEvent = new LoggingEvent(
-			this.category,
+			this.name,
 			Level.toString(logLevel),
 			message,
 			exception,
