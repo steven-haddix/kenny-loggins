@@ -14,7 +14,7 @@ const PATHS = {
 var common = {
     module: {
         loaders: [{
-            loaders: ['uglify','babel-loader'],
+            loaders: ['babel-loader'],
             exclude: /node_modules/
         }]
     },
