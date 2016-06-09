@@ -1,5 +1,5 @@
 import Logger from '../src/Logger';
-import ConsoleAppender from '../src/appenders/Console';
+import ConsoleAppender from '../src/appenders/console';
 import { Level } from '../src/level';
 import LoggingEvent from '../src/loggingEvent';
 import expect, { spyOn } from 'expect';
