@@ -41,7 +41,7 @@ function generateJSONMessage(loggingEvent, referer, useragent) {
 	return JSON.stringify({
 		system: loggingEvent.categoryName,
 		logLevel: loggingEvent.level.toString(),
-		logMessage: JSON.stringify(loggingEvent.message),
+		logMessage: loggingEvent.message,
 		referer,
 		useragent,
 		dateLogged: formatUTCDate(loggingEvent.startTime, 'yyyy-MM-ddThh:mm:ssZ')
