@@ -40,30 +40,12 @@ function formatMessage(message) {
 function generateJSONMessage(loggingEvent, referer, useragent) {
 	return JSON.stringify({
 		system: loggingEvent.categoryName,
-		logLevel: loggingEvent.level.toString(),
+		logLevel: loggingEvent.level,
 		logMessage: loggingEvent.message,
 		referer,
 		useragent,
-		dateLogged: formatUTCDate(loggingEvent.startTime, 'yyyy-MM-ddThh:mm:ssZ')
+		dateLogged: loggingEvent.startTime
 	});
-}
-
-// TODO: Determine if this is actually needed
-function getUserAgent() {
-	try {
-		return navigator.userAgent;
-	} catch (e) {
-		return 'unknown';
-	}
-}
-
-// TODO: Determine if this is actually needed
-function getReferer() {
-	try {
-		return location.href;
-	} catch (e) {
-		return 'unknown';
-	}
 }
 
 export default function format(loggingEvent) {

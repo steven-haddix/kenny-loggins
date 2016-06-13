@@ -1,64 +1,43 @@
 /**
  * Models a logging event.
  * @constructor
- * @param {String} categoryName name of category
+ * @param {String} loggerName name of logger
  * @param {Level} level level of message
  * @param {String} message message to log
  * @param {Logger} logger the associated logger
- * @author Seth Chisamore
+ * @param {String} exception to log
  */
 export default class LoggingEvent {
-	constructor(categoryName, level, message, exception, logger) {
+	constructor(loggerName, level, message, exception) {
 		/**
 		 * the timestamp of the Logging Event
 		 * @type Date
 		 * @private
 		 */
-		this.startTime = new Date();
+		this.dateLogged = new Date();
 		/**
-		 * category of event
+		 * loggerName of event
 		 * @type String
 		 * @private
 		 */
-		this.categoryName = categoryName;
-		/**
-		 * the logging message
-		 * @type String
-		 * @private
-		 */
-		this.message = message;
-		/**
-		 * the logging exception
-		 * @type Exception
-		 * @private
-		 */
-		this.exception = exception;
+		this.loggerName = loggerName;
 		/**
 		 * level of log
 		 * @type Level
 		 * @private
 		 */
-		this.level = level;
+		this.logLevel = level;
 		/**
-		 * reference to logger
-		 * @type Logger
+		 * the logging message
+		 * @type String
 		 * @private
 		 */
-		this.logger = logger;
-	}
-
-	getLevel() {
-		return this.level;
-	}
-
-	/**
-	 * get the timestamp formatted as String.
-	 * @return {String} formatted timestamp
-	 */
-	getFormattedTimestamp() {
-		if (this.logger) {
-			return this.logger.getFormattedTimestamp(this.startTime);
-		}
-		return this.startTime.toGMTString();
+		this.logMessage = message;
+		/**
+		 * the logging exception
+		 * @type String
+		 * @private
+		 */
+		this.exception = exception;
 	}
 }

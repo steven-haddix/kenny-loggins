@@ -40,9 +40,10 @@ export default class KennyLoggins {
 	 * }]
 	 *
 	 * @param configs
+	 * @param globals
 	 * @returns {KennyLoggins}
      */
-	configure(configs) {
+	configure(configs, globals = {}) {
 		if (!Array.isArray(configs)) {
 			return this;
 		}
@@ -62,6 +63,8 @@ export default class KennyLoggins {
 				if (!logger) {
 					logger = this.createLogger(name);
 				}
+
+				config['globals'] = globals;
 
 				return logger.configure(config);
 			} catch (ex) {

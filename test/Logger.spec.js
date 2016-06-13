@@ -18,12 +18,14 @@ describe('Logger', () => {
 
   it('runs configuration routine', () => {
     const configLevelSpy = expect.spyOn(logger, 'configureLevel').andReturn(logger);
-    const configAppendersSpy = expect.spyOn(logger, 'configureAppenders');
+    const configAppendersSpy = expect.spyOn(logger, 'configureAppenders').andReturn(logger);
+    const configGlobalsSpy = expect.spyOn(logger, 'configureGlobals').andReturn(logger);
 
     logger.configure({});
 
     expect(configLevelSpy).toHaveBeenCalledWith({});
     expect(configAppendersSpy).toHaveBeenCalledWith({});
+    expect(configGlobalsSpy).toHaveBeenCalledWith({});
   })
 
   it('configures log level', () => {

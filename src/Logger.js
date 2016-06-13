@@ -1,11 +1,12 @@
 import { DEFAULT_DATE_FORMAT, formatDate } from './helpers/dateHelper';
 import LoggingEvent from './loggingEvent';
 import PubSub from './PubSub';
-import { Level, getLevelFromText } from './level';
+import { Level } from './level';
 
 export default class Logger {
 	constructor(name = '') {
 		this.appenders = [];
+		this.globals = {};
 		this.name = name;
 		this.level = Level.ERROR;
 		this.dateformat = DEFAULT_DATE_FORMAT;
@@ -14,7 +15,9 @@ export default class Logger {
 	}
 
 	configure(config) {
-		this.configureLevel(config).configureAppenders(config);
+		this.configureLevel(config)
+			.configureAppenders(config)
+			.configureGlobals(config);
 		return this;
 	}
 
@@ -52,6 +55,19 @@ export default class Logger {
 	}
 
 	/**
+	 * Allows for globals merged into logger config. Globals will be added
+	 * to every log message on log event.
+	 * @param {object }config
+	 * @returns {Logger} returns self to allow for chaining
+     */
+	configureGlobals(config) {
+		if(config && typeof config.globals === 'object') {
+			Object.assign(this.globals, config.globals);
+		}
+		return this;
+	}
+
+	/**
 	 * Makes pubsub.subscribe available to appenders
 	 * @param message
 	 * @param callback
@@ -79,9 +95,11 @@ export default class Logger {
 			this.name,
 			Level.toString(logLevel),
 			message,
-			exception,
-			this
+			exception
 		);
+
+		Object.assign(loggingEvent, loggingEvent, this.globals);
+
 		this.pubsub.publish('log', loggingEvent);
 	}
 
