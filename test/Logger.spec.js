@@ -16,43 +16,53 @@ describe('Logger', () => {
     expect.restoreSpies();
   })
 
-  it('runs configuration routine', () => {
-    const configLevelSpy = expect.spyOn(logger, 'configureLevel').andReturn(logger);
-    const configAppendersSpy = expect.spyOn(logger, 'configureAppenders');
+  describe('configuration', () => {
+    it('runs each routine', () => {
+      const configLevelSpy = expect.spyOn(logger, 'configureLevel').andReturn(logger);
+      const configAppendersSpy = expect.spyOn(logger, 'configureAppenders').andReturn(logger);
+      const configGlobalsSpy = expect.spyOn(logger, 'configureGlobals').andReturn(logger);
 
-    logger.configure({});
+      logger.configure({});
 
-    expect(configLevelSpy).toHaveBeenCalledWith({});
-    expect(configAppendersSpy).toHaveBeenCalledWith({});
-  })
+      expect(configLevelSpy).toHaveBeenCalledWith({});
+      expect(configAppendersSpy).toHaveBeenCalledWith({});
+      expect(configGlobalsSpy).toHaveBeenCalledWith({});
+    })
 
-  it('configures log level', () => {
-    const spy = expect.spyOn(logger, 'setLevel');
+    it('sets log level', () => {
+      const spy = expect.spyOn(logger, 'setLevel');
 
-    expect(logger.configureLevel({ level: Level.WARN })).toEqual(logger);
-    expect(spy).toHaveBeenCalledWith(Level.WARN);
-  })
+      expect(logger.configureLevel({ level: Level.WARN })).toEqual(logger);
+      expect(spy).toHaveBeenCalledWith(Level.WARN);
+    })
 
-  it('handles incorrect appender configurations', () => {
-    expect(logger.configureAppenders(null)).toEqual(logger);
-    expect(logger.configureAppenders({stuff: ""})).toEqual(logger);
-    expect(logger.configureAppenders({appenders: [()=>{}]})).toEqual(logger);
-  })
+    it('uses default logging level if none is provided', () => {
+      const spy = expect.spyOn(Level, 'toLevel');
 
-  it('subscribes appenders passed in from configuration', () => {
-    var consoleAppender = new ConsoleAppender();
-    var subscribeSpy = expect.spyOn(consoleAppender, 'subscribeToLogger').andCallThrough();
-    logger.configureAppenders({appenders: [consoleAppender]});
+      expect(logger.configureLevel(null)).toEqual(logger);
+      expect(spy).toNotHaveBeenCalled();
+    })
 
-    expect(logger.appenders.length).toEqual(1);
-    expect(subscribeSpy).toHaveBeenCalledWith(logger);
-  })
+    it('sets global variables', () => {
+        expect(
+          logger.configureGlobals({ globals: {test: 'test'} }).globals
+        ).toEqual({test: 'test'})
+    })
 
-  it('uses default logging level if none is provided', () => {
-    const spy = expect.spyOn(Level, 'toLevel');
+    it('handles incorrect appender configurations', () => {
+      expect(logger.configureAppenders(null)).toEqual(logger);
+      expect(logger.configureAppenders({stuff: ""})).toEqual(logger);
+      expect(logger.configureAppenders({appenders: [()=>{}]})).toEqual(logger);
+    })
 
-    expect(logger.configureLevel(null)).toEqual(logger);
-    expect(spy).toNotHaveBeenCalled();
+    it('subscribes appenders', () => {
+      var consoleAppender = new ConsoleAppender();
+      var subscribeSpy = expect.spyOn(consoleAppender, 'subscribeToLogger').andCallThrough();
+      logger.configureAppenders({appenders: [consoleAppender]});
+
+      expect(logger.appenders.length).toEqual(1);
+      expect(subscribeSpy).toHaveBeenCalledWith(logger);
+    })
   })
 
   it('dispatches logging events', () => {

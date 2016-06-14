@@ -2,6 +2,7 @@ import BaseAppender from './BaseAppender';
 import Client from './client/Client';
 import { defaults, configure } from './config/defaults';
 import format from './layouts/json';
+import Helper from '../helpers/helper';
 
 export default class AjaxAppender extends BaseAppender {
 	constructor(config) {
@@ -16,8 +17,7 @@ export default class AjaxAppender extends BaseAppender {
 	 * @param loggingEvent event to be logged
 	 */
 	doAppend(loggingEvent) {
-		// TODO: layout should be configurable
-		this.send(format(loggingEvent));
+		this.send(JSON.stringify(loggingEvent));
 	}
 
 	/**
