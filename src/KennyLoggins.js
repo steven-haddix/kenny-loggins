@@ -39,38 +39,39 @@ export default class KennyLoggins {
 	 * 		appenders: [new ConsoleAppender()]
 	 * }]
 	 *
-	 * @param configs
-	 * @param globals
+	 * @param config
 	 * @returns {KennyLoggins}
      */
-	configure(configs, globals = {}) {
-		if (!Array.isArray(configs)) {
+	configure(config) {
+		if (typeof config !== 'object') {
 			return this;
 		}
 
-		configs.forEach((config) => {
-			try {
-				let name = '';
+		if(config.appenders && Array.isArray(config.appenders)) {
+			config.appenders.forEach((config) => {
+				try {
+					let name = '';
 
-				if (config.pattern) {
-					name = config.pattern;
-				} else if (config.name) {
-					name = config.name;
+					if (config.pattern) {
+						name = config.pattern;
+					} else if (config.name) {
+						name = config.name;
+					}
+
+					let logger = this.getLoggerByName(name);
+
+					if (!logger) {
+						logger = this.createLogger(name);
+					}
+
+					config['globals'] = config.globals ? config.globals : {};
+
+					return logger.configure(config);
+				} catch (ex) {
+					// continue regardless of error
 				}
-
-				let logger = this.getLoggerByName(name);
-
-				if (!logger) {
-					logger = this.createLogger(name);
-				}
-
-				config['globals'] = globals;
-
-				return logger.configure(config);
-			} catch (ex) {
-				// continue regardless of error
-			}
-		});
+			});
+		}
 
 		return this;
 	}
