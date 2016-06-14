@@ -9,24 +9,28 @@ describe('Kenny Loggins', () => {
     let loggins;
 
     beforeEach(() => {
-        loggins = new KennyLoggins().configure([
-            {
-                name: 'com.wendys.web.services.test',
-                appenders: []
-            },
-            {
-                pattern: '^com.wendys.web.services.orders',
-                appenders: []
-            },
-            {
-                pattern: '^com.wendys.web.services',
-                appenders: []
-            },
-            {
-                pattern: '^com.wendys.web',
-                appenders: []
+        loggins = new KennyLoggins().configure({
+            appenders:
+                [{
+                    name: 'com.wendys.web.services.test',
+                    appenders: []
+                },
+                {
+                    pattern: '^com.wendys.web.services.orders',
+                    appenders: []
+                },
+                {
+                    pattern: '^com.wendys.web.services',
+                    appenders: []
+                },
+                {
+                    pattern: '^com.wendys.web',
+                    appenders: []
+                }],
+            globals: {
+
             }
-        ]);
+        });
     })
 
     afterEach(() => {
