@@ -21,6 +21,7 @@ KennyLoggins is a singleton. Once configured, **getLogger** will return the matc
 - Appender patterns are regex patters.
 - Level dictates the minimum log threshold for the appender to output a message.
 - **globals** are attributes that get applied to every appender message.
+
 ```javascript
 require('wendys-kenny-loggins')
     .KennyLoggins
