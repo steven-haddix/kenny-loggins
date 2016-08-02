@@ -17,4 +17,8 @@ export default class Helper {
         }
         return false;
     }
+
+    static merge(context, defaultConfig, newConfig) {
+        Object.assign(context, defaultConfig, newConfig);
+    }
 }

@@ -1,5 +1,5 @@
 import Logger from '../src/Logger';
-import ConsoleAppender from '../src/appenders/console';
+import BaseAppender from '../src/BaseAppender';
 import { Level } from '../src/level';
 import LoggingEvent from '../src/loggingEvent';
 import expect, { spyOn } from 'expect';
@@ -56,9 +56,9 @@ describe('Logger', () => {
     })
 
     it('subscribes appenders', () => {
-      var consoleAppender = new ConsoleAppender();
-      var subscribeSpy = expect.spyOn(consoleAppender, 'subscribeToLogger').andCallThrough();
-      logger.configureAppenders({appenders: [consoleAppender]});
+      var baseAppender = new BaseAppender();
+      var subscribeSpy = expect.spyOn(baseAppender, 'subscribeToLogger').andCallThrough();
+      logger.configureAppenders({appenders: [baseAppender]});
 
       expect(logger.appenders.length).toEqual(1);
       expect(subscribeSpy).toHaveBeenCalledWith(logger);

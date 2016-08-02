@@ -1,11 +1,9 @@
-import { configure } from './config/defaults';
-
 /**
  * Abstract base class for other appenders.
  */
 export default class BaseAppender {
 	constructor(config) {
-		configure(this, {}, config);
+		Object.assign(this, {}, config);
 		this.tokens = [];
 	}
 
