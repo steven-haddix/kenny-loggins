@@ -48,14 +48,14 @@ export default class KennyLoggins {
 		}
 
 		if(config.appenders && Array.isArray(config.appenders)) {
-			config.appenders.forEach((config) => {
+			config.appenders.forEach((appenderConfig) => {
 				try {
 					let name = '';
 
-					if (config.pattern) {
-						name = config.pattern;
-					} else if (config.name) {
-						name = config.name;
+					if (appenderConfig.pattern) {
+						name = appenderConfig.pattern;
+					} else if (appenderConfig.name) {
+						name = appenderConfig.name;
 					}
 
 					let logger = this.getLoggerByName(name);
@@ -64,9 +64,9 @@ export default class KennyLoggins {
 						logger = this.createLogger(name);
 					}
 
-					config['globals'] = config.globals ? config.globals : {};
+					appenderConfig['globals'] = config.globals ? config.globals : {};
 
-					return logger.configure(config);
+					return logger.configure(appenderConfig);
 				} catch (ex) {
 					// continue regardless of error
 				}
