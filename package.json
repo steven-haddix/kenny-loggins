@@ -58,8 +58,6 @@
     "webpack-merge": "^0.8.4"
   },
   "dependencies": {
-    "bluebird": "^3.3.5",
-    "superagent": "^1.8.3",
-    "superagent-legacyiesupport": "^1.0.1"
+    "bluebird": "^3.3.5"
   }
 }

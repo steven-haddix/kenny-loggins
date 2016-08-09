@@ -1,11 +1,13 @@
 # Kenny Loggins
 
-### Installation
-Point NPM to nexus server (~/.npmrc). Comment out existing registry entry.
+### Confiuring Nexus
+Point NPM to nexus server using the following console commands
+```bash
+$ npm config set strict-ssl false
+$ npm config set registry https://nexus/repository/npm-all/=true
 ```
-npm config set registry https://nexus/repository/npm-all/=true
-registry=https://nexus/repository/npm-all/
-```
+
+### Project Installation
 Install in project
 ```sh
 $ npm i -S wendys-kenny-loggins
