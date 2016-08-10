@@ -16,15 +16,15 @@ describe('Kenny Loggins', () => {
                     appenders: []
                 },
                 {
-                    pattern: '^com.wendys.web.services.orders',
+                    name: '^com.wendys.web.services.orders',
                     appenders: []
                 },
                 {
-                    pattern: '^com.wendys.web.services',
+                    name: '^com.wendys.web.services',
                     appenders: []
                 },
                 {
-                    pattern: '^com.wendys.web',
+                    name: '^com.wendys.web',
                     appenders: []
                 }],
             globals: {
@@ -51,8 +51,8 @@ describe('Kenny Loggins', () => {
     })
 
     describe('configure', () => {
-        it('creates and adds loggers to logger array', () => {
-            expect(loggins.loggers.length).toEqual(4);
+        it('adds configs to config array', () => {
+            expect(loggins.configs.length).toEqual(4);
         })
 
         it('returns instance of loggins when complete', () => {
@@ -67,13 +67,13 @@ describe('Kenny Loggins', () => {
     describe('getLogger', () => {
         it('returns logger', () => {
             var pattern = 'com.wendys.web.services.test';
-            var logger = loggins.getLogger(`${pattern}`);
+            var logger = loggins.getLogger(pattern);
             expect(logger.name).toEqual(pattern);
         })
 
         it('returns default instance if no logger is found', () => {
             var pattern = 'not.to.be.found';
-            var logger = loggins.getLogger(`${pattern}`);
+            var logger = loggins.getLogger(pattern);
             expect(logger.name).toEqual('default');
         })
     })
@@ -81,7 +81,7 @@ describe('Kenny Loggins', () => {
     describe('getLoggerByPattern', () => {
         it('returns first matching logger', () => {
             var name = 'com.wendys.web.services.test';
-            var logger = loggins.getLogger(`${name}`);
+            var logger = loggins.getLogger(name);
             expect(logger.name).toEqual(name);
         })
     })
@@ -89,7 +89,8 @@ describe('Kenny Loggins', () => {
     describe('getLoggerByName', () => {
         it('returns first matching logger', () => {
             var name = 'com.wendys.web.services.test';
-            var logger = loggins.getLoggerByName(`${name}`);
+            loggins.getLogger(name);
+            var logger = loggins.getLoggerByName(name);
             expect(logger.name).toEqual(name);
         })
     })

@@ -22,6 +22,8 @@ export default class KennyLoggins {
 		 * @private
 		 */
 		this.loggers = [];
+
+		this.configs = [];
 	}
 
 	/**
@@ -50,23 +52,8 @@ export default class KennyLoggins {
 		if(config.appenders && Array.isArray(config.appenders)) {
 			config.appenders.forEach((appenderConfig) => {
 				try {
-					let name = '';
-
-					if (appenderConfig.pattern) {
-						name = appenderConfig.pattern;
-					} else if (appenderConfig.name) {
-						name = appenderConfig.name;
-					}
-
-					let logger = this.getLoggerByName(name);
-
-					if (!logger) {
-						logger = this.createLogger(name);
-					}
-
 					appenderConfig['globals'] = config.globals ? config.globals : {};
-
-					return logger.configure(appenderConfig);
+					this.configs.push(appenderConfig);
 				} catch (ex) {
 					// continue regardless of error
 				}
@@ -83,10 +70,16 @@ export default class KennyLoggins {
 	 */
 	getLogger(name) {
 		try {
-			const logger = this.getLoggerByPattern(name);
+			const logger = this.getLoggerByName(name);
 
 			if (logger) {
 				return logger.logger;
+			}
+
+			const config = this.getLoggerConfig(name);
+
+			if(config) {
+				return this.createLogger(name, config);
 			}
 
 			return this.getDefaultLogger();
@@ -98,10 +91,11 @@ export default class KennyLoggins {
 	/**
 	 * Function for creating new loggers. Adds new logger to list of logger instances.
 	 * @param {string} name
+	 * @param {object} config
  	 * @returns {Logger}
      */
-	createLogger(name) {
-		const logger = new Logger(name);
+	createLogger(name, config) {
+		const logger = new Logger(name).configure(config);
 
 		if (!this.debugMode) {
 			this.productionize(logger);
@@ -125,18 +119,18 @@ export default class KennyLoggins {
 		return this.createLogger('default');
 	}
 
-	getLoggerByPattern(name) {
+	getLoggerConfig(name) {
 		let isFound = false;
-		let logger;
+		let config;
 
-		this.loggers.forEach((l) => {
-			if (!isFound && this.regex(l.name, name)) {
+		this.configs.forEach((c) => {
+			if (!isFound && this.regex(c.name, name)) {
 				isFound = true;
-				logger = l;
+				config = c;
 			}
 		});
 
-		return logger;
+		return config;
 	}
 
 	getLoggerByName(name) {
