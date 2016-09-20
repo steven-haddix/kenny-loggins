@@ -12,7 +12,7 @@ There are appenders for printing the event to the console, writing the event to 
 There is no requirement for clients to configure any appenders. If no appropriate appenders are found by the 
 Kenny Loggins framework, it simply drops the event. This permits a project (project A) to include another project
 that supports Kenny Loggins (project B), without requiring project A to have any knowledge of Kenny Loggins. 
----
+***
 ## Appenders
 Appenders are responsible for delivering LogEvents to their destination. Every Appender must implement a 
 doAppend(loggingEvent) method. Appenders should extend BaseAppender.
@@ -21,7 +21,7 @@ Appenders usually are only responsible for writing the event data to the target 
 wrap other appenders so that they can modify the LogEvent, etc.
 
 Appenders always have a name so that they can be referenced from Loggers.
----
+***
 ## Installation
 Kenny Loggins is installed via NPM, and resides in the Nexus repository. 
 So you must first configure npm so it points to the correct Nexus server, then install it to your project via
@@ -39,7 +39,7 @@ Install Kenny Loggins into your project via npm.
 ```sh
 $ npm i -S wendys-kenny-loggins
 ```
----
+***
 ## Usage
 To use Kenny Loggins in your project, you will need to:
 
