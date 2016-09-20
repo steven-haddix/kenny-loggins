@@ -28,7 +28,7 @@ You must first configure npm so it points to the correct Nexus server, then inst
 npm.
 
 ### Configuring Nexus
-Point NPM to nexus server using the following console commands
+Point NPM to the nexus server using the following console commands:
 ```bash
 $ npm config set strict-ssl false
 $ npm config set registry https://nexus/repository/npm-all/=true
