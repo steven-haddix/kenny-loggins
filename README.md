@@ -61,7 +61,7 @@ require('wendys-kenny-loggins')
 
 ### Getting a Logger Instance
 
-Gets a new instance of a logger or returns an existing logger using a regex string as a key.
+Get's a new instance of a logger, or returns an existing logger using a regex string as a key.
 ```javascript
 var logger = require('wendys-kenny-loggins')
                 .KennyLoggins
@@ -70,12 +70,21 @@ var logger = require('wendys-kenny-loggins')
 
 ### Using the Logger
 
-KennyLoggins supports 4 logging levels. Each appender is assigned both a name and a logging level.
+KennyLoggins supports 4 logging levels. Each appender is assigned both a name 
+and a logging level. This enables the use of different logs for different levels. 
 
-- info
-- debug
-- warn
-- error
+Each log level listed here also will include logging statements for those levels listed above it. 
+So an appender set up for INFO will also receive logging events for WARN, ERROR and FATAL. The lower 
+on the list, the more verbose the output
+
+- OFF
+- FATAL
+- ERROR
+- WARN
+- INFO
+- DEBUG
+- TRACE
+- ALL
 
 
 #### info
