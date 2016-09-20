@@ -52,7 +52,7 @@ To use Kenny Loggins in your project, you need to
 
 - Appender configuration order matters, as priority is top to bottom.
 - Only the first matching appender will be applied. 
-    - Names can use wildcards.
+    - Names can use wildcards ('common.service.*')
     - Appender patterns are regex patterns.
 - Level dictates the minimum log threshold for the appender to output a message.
 - **globals** are attributes that get applied to every appender message.
