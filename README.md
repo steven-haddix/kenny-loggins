@@ -24,7 +24,7 @@ Appenders always have a name so that they can be referenced from Loggers.
 ***
 ## Installation
 Kenny Loggins is installed via NPM, and resides in the Nexus repository. 
-So you must first configure npm so it points to the correct Nexus server, then install it to your project via
+You must first configure npm so it points to the correct Nexus server, then install it to your project via
 npm.
 
 ### Configuring Nexus
@@ -89,7 +89,7 @@ var logger = require('wendys-kenny-loggins')
 
 ### Using the Logger
 
-KennyLoggins supports 4 logging levels. Each appender is assigned both a name 
+KennyLoggins supports multiple logging levels. Each appender is assigned both a name 
 and a logging level. This enables the use of different logs for different levels. 
 
 Each log level listed here also will include logging statements for those levels listed above it. 
