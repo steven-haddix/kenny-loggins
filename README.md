@@ -28,14 +28,14 @@ Kenny Loggins is installed via NPM, and resides in the Nexus repository.
 So you must first configure npm so it points to the correct Nexus server, then install it to your project via
 npm.
 
-    ### Confiuring Nexus
+### Confiuring Nexus
 Point NPM to nexus server using the following console commands
 ```bash
 $ npm config set strict-ssl false
 $ npm config set registry https://nexus/repository/npm-all/=true
 ```
 
-    ### Project Installation
+### Project Installation
 Install in project
 ```sh
 $ npm i -S wendys-kenny-loggins
