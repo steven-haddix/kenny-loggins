@@ -42,9 +42,8 @@ $ npm i -S wendys-kenny-loggins
 ```
 
 ## Usage
-
 To use Kenny Loggins in your project, you need to
-]
+
 - configure 1 or more appenders
 - get a logger instance
 - pass the event/data/info you wish to be logged to the logger
@@ -53,8 +52,8 @@ To use Kenny Loggins in your project, you need to
 
 - Appender configuration order matters, as priority is top to bottom.
 - Only the first matching appender will be applied. 
--- Names can use wildcards.
--- Appender patterns are regex patterns.
+    - Names can use wildcards.
+    - Appender patterns are regex patterns.
 - Level dictates the minimum log threshold for the appender to output a message.
 - **globals** are attributes that get applied to every appender message.
 
