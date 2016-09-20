@@ -1,19 +1,5 @@
 # Kenny Loggins
 
-## Overview
-
-blah blah
-
-## Appenders
-Appenders are responsible for delivering LogEvents to their destination. Every Appender must implement a doAppend(loggingEvent) method. 
-Appenders should extend BaseAppender.
-
-Appenders usually are only responsible for writing the event data to the target destination. Some appenders wrap other appenders so that they can modify the LogEvent, etc.
-
-Appenders always have a name so that they can be referenced from Loggers.
-
-## Installation
-
 ### Confiuring Nexus
 Point NPM to nexus server using the following console commands
 ```bash
@@ -26,11 +12,12 @@ Install in project
 ```sh
 $ npm i -S wendys-kenny-loggins
 ```
+---
 
-## Usage
+## KennyLoggins
+KennyLoggins is a singleton. Once configured, **getLogger** will return the matching logger anywhere in the project. If no logger is matches a default unconfigured logger will be returned. It will not output anything.
 
-### Configuration
-
+### configuration
 - Appender configuration order matters as priority is top to bottom.
 - Only the first matching appender will be applied.
 - Appender patterns are regex patters.
@@ -59,38 +46,44 @@ require('wendys-kenny-loggins')
 );
 ```
 
-### Getting a Logger Instance
-
+### getLogger
 Gets a new instance of a logger or returns an existing logger using a regex string as a key.
 ```javascript
 var logger = require('wendys-kenny-loggins')
                 .KennyLoggins
                 .getLogger('web.common.services.careers');
 ```
-
-### Using the Logger
-
-KennyLoggins supports 4 logging levels. Each appender is assigned both a name and a logging level.
-
-- info
-- debug
-- warn
-- error
-
-
-#### info
+## Logger
+### info
 ```javascript
 logger.info('Info Data');
 ```
-#### debug
+### debug
 ```javascript
 logger.debug('Debug Data');
 ```
-#### warn
+### warn
 ```javascript
 logger.warn('Warn Data');
 ```
-#### error
+### error
 ```javascript
 logger.error('Error Data');
+```
+---
+## AjaxAppender
+```javascript
+var ajaxAppender = new (require('wendys-kenny-loggins').AjaxAppender)({
+    url: 'http://localhost:8080/log'
+})
+```
+## ConsoleAppender
+```javascript
+var ajaxAppender = new (require('wendys-kenny-loggins').ConsoleAppender)()
+```
+---
+## Level
+Enum for log levels
+```javascript
+require('wendys-kenny-loggins').Level.INFO
 ```
