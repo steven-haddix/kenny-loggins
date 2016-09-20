@@ -105,7 +105,18 @@ on the list, the more verbose the output
 - TRACE
 - ALL
 
-
+#### fatal
+```javascript
+logger.fatal('Fatal Data');
+```
+#### error
+```javascript
+logger.error('Error Data');
+```
+#### warn
+```javascript
+logger.warn('Warn Data');
+```
 #### info
 ```javascript
 logger.info('Info Data');
@@ -114,11 +125,7 @@ logger.info('Info Data');
 ```javascript
 logger.debug('Debug Data');
 ```
-#### warn
+#### trace
 ```javascript
-logger.warn('Warn Data');
-```
-#### error
-```javascript
-logger.error('Error Data');
+logger.trace('Trace Data');
 ```
