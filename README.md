@@ -2,13 +2,23 @@
 
 ## Overview
 
-blah blah
+Kenny Loggins is a logging framework based on the [log4js](https://github.com/stritti/log4js) framework.
+It consists of the logging framework itself, plus various appenders. The framework simply forwards logging
+events to the appropriate appender based on name and logging level, and the appender handles it from there. 
+
+There are appenders for printing the event to the console, writing the event to a file, etc.
+
+There is no requirement for clients to configure any appenders. If no appropriate appenders are found by the 
+Kenny Loggins framework, it simply drops the event. This permits a project (project A) to include another project
+that supports Kenny Loggins (project B), without requiring project A to have any knowledge of Kenny Loggins. 
+
 
 ## Appenders
-Appenders are responsible for delivering LogEvents to their destination. Every Appender must implement a doAppend(loggingEvent) method. 
-Appenders should extend BaseAppender.
+Appenders are responsible for delivering LogEvents to their destination. Every Appender must implement a 
+doAppend(loggingEvent) method. Appenders should extend BaseAppender.
 
-Appenders usually are only responsible for writing the event data to the target destination. Some appenders wrap other appenders so that they can modify the LogEvent, etc.
+Appenders usually are only responsible for writing the event data to the target destination. Some appenders 
+wrap other appenders so that they can modify the LogEvent, etc.
 
 Appenders always have a name so that they can be referenced from Loggers.
 
@@ -31,9 +41,9 @@ $ npm i -S wendys-kenny-loggins
 
 ### Configuration
 
-- Appender configuration order matters as priority is top to bottom.
+- Appender configuration order matters, as priority is top to bottom.
 - Only the first matching appender will be applied.
-- Appender patterns are regex patters.
+- Appender patterns are regex patterns.
 - Level dictates the minimum log threshold for the appender to output a message.
 - **globals** are attributes that get applied to every appender message.
 
