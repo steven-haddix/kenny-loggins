@@ -3,8 +3,9 @@
 ## Overview
 
 Kenny Loggins is a logging framework based on the [log4js](https://github.com/stritti/log4js) framework.
-It consists of the logging framework itself, plus various appenders. The framework simply forwards logging
-events to the appropriate appender based on name and logging level, and the appender handles it from there. 
+It consists of the logging framework itself, plus various appenders (each appender is a seperate project). 
+The framework simply forwards logging events to the appropriate appender based on name and logging level, 
+and the appender handles it from there. 
 
 There are appenders for printing the event to the console, writing the event to a file, etc.
 
@@ -23,6 +24,9 @@ wrap other appenders so that they can modify the LogEvent, etc.
 Appenders always have a name so that they can be referenced from Loggers.
 
 ## Installation
+Kenny Loggins is installed via NPM, and resides in the Nexus repository. 
+So you must first configure npm so it points to the correct Nexus server, then install it to your project via
+npm.
 
 ### Confiuring Nexus
 Point NPM to nexus server using the following console commands
@@ -39,11 +43,18 @@ $ npm i -S wendys-kenny-loggins
 
 ## Usage
 
+To use Kenny Loggins in your project, you need to
+]
+- configure 1 or more appenders
+- get a logger instance
+- pass the event/data/info you wish to be logged to the logger
+
 ### Configuration
 
 - Appender configuration order matters, as priority is top to bottom.
-- Only the first matching appender will be applied.
-- Appender patterns are regex patterns.
+- Only the first matching appender will be applied. 
+-- Names can use wildcards.
+-- Appender patterns are regex patterns.
 - Level dictates the minimum log threshold for the appender to output a message.
 - **globals** are attributes that get applied to every appender message.
 
