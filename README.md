@@ -4,7 +4,7 @@
 Point NPM to nexus server using the following console commands
 ```bash
 $ npm config set strict-ssl false
-$ npm config set registry https://nexus/repository/npm-all/=true
+$ npm config set registry https://nexus/repository/npm-all/
 ```
 
 ### Project Installation
