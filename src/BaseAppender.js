@@ -3,8 +3,15 @@
  */
 export default class BaseAppender {
 	constructor(config) {
+		this.buffer = [];
+		this.bufferTimer = null;
+		this.bufferSize = 1;
+		this.bufferInterval = 60;
+
 		Object.assign(this, {}, config);
+
 		this.tokens = [];
+		this.startBufferTimer();
 	}
 
 	/**
@@ -13,11 +20,37 @@ export default class BaseAppender {
 	 */
 	doAppend() {}
 
+	startBufferTimer() {
+		if(this.bufferTimer !== null) {
+			clearTimeout(this.bufferTimer)
+		}
+
+		this.bufferTimer = setTimeout(() => this.drainBuffer(), this.bufferInterval);
+	}
+
+	addToBuffer(event) {
+		this.buffer.push(event)
+		this.checkBuffer()
+	}
+
+	checkBuffer() {
+		if(this.buffer.length >= this.bufferSize) {
+			this.drainBuffer()
+			this.startBufferTimer()
+		}
+	}
+
+	drainBuffer() {
+		if(this.buffer.length > 0) {
+			this.doAppend(this.buffer)
+		}
+	}
+
 	/**
 	 * Event handler for log events
      */
 	onLogEventHandler(message, payload) {
-		this.doAppend(payload);
+		this.addToBuffer(payload);
 	}
 
 	/**
