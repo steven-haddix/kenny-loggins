@@ -1,251 +1,119 @@
-import { DEFAULT_DATE_FORMAT, formatDate } from './helpers/dateHelper';
+import cloneDeep from 'lodash.clonedeep';
 import LoggingEvent from './loggingEvent';
-import PubSub from './PubSub';
+import { formatError } from './formatters'
 import { Level } from './level';
+import { logger } from './defaults'
+import { isFunction, isNumeric, isString, isObject } from './helpers'
 
 export default class Logger {
-	constructor(name = '') {
-		this.appenders = [];
-		this.globals = {};
-		this.name = name;
-		this.level = Level.ERROR;
-		this.dateformat = DEFAULT_DATE_FORMAT;
-
-		this.pubsub = new PubSub();
+	constructor(config = logger) {
+		Object.assign(this, config)
 	}
 
-	configure(config) {
-		this.configureLevel(config)
-			.configureAppenders(config)
-			.configureGlobals(config);
-		return this;
-	}
-
-	/**
-	 * Configures the log level
-	 * @param {Object} config - Object that contains log level
-	 * @returns {Logger} returns self to allow for chaining
-     */
-	configureLevel(config) {
-		if (config && config.level && typeof config.level === 'number') {
-			this.setLevel(config.level);
+	static createLogger(config) {
+		const configuration = {
+			name: Logger.validateName(config.name),
+			level: Logger.validateLevel(config.name, config.level),
+			formatters: Logger.validateFormatters(config.formatters),
+			globals: Logger.validateGlobals(config.globals),
+			callback: Logger.validateCallback(config.callback)
 		}
-		return this;
+
+		Logger.prototype.trace = Logger.createEmitters(Level.TRACE)
+		Logger.prototype.debug = Logger.createEmitters(Level.DEBUG)
+		Logger.prototype.info = Logger.createEmitters(Level.INFO)
+		Logger.prototype.warn = Logger.createEmitters(Level.WARN)
+		Logger.prototype.error = Logger.createEmitters(Level.ERROR)
+		Logger.prototype.fatal = Logger.createEmitters(Level.FATAL)
+
+		return new Logger(configuration)
 	}
 
-	/**
-	 * Loops through array of appenders, subscribes them to logger, and adds
-	 * them to a local list of appenders.
-	 * @param {Object} config - Object that contains an array of appenders
-	 * @returns {Logger} returns self to allow for chaining
-     */
-	configureAppenders(config) {
-		if (config && Array.isArray(config.appenders)) {
-			// const appenders = createAppenders(config.appenders, config.appenders);
-			config.appenders.forEach((appender) => {
-				if (typeof appender === 'object' &&
-						typeof appender.subscribeToLogger === 'function' &&
-						appender.subscribeToLogger(this)) {
-
-					this.appenders.push(appender);
-				}
-			});
+	static validateName(name) {
+		if (isString(name)) {
+			return name
 		}
-		return this;
+		throw new Error(`Invalid logger name "${name}". Must be a non-empty string.`)
 	}
 
-	/**
-	 * Allows for globals merged into logger config. Globals will be added
-	 * to every log message on log event.
-	 * @param {object }config
-	 * @returns {Logger} returns self to allow for chaining
-     */
-	configureGlobals(config) {
-		if(config && typeof config.globals === 'object') {
-			Object.assign(this.globals, config.globals);
+	static validateCallback(callback) {
+		if (isFunction(callback)) {
+			return callback
 		}
-		return this;
+		throw new Error(`Invalid logger callback. Must be a of type function.`)
 	}
 
-	/**
-	 * Makes pubsub.subscribe available to appenders
-	 * @param message
-	 * @param callback
-	 * @returns {boolean}
-     */
-	subscribe(message, callback) {
-		return this.pubsub.subscribe(message, callback);
+	static validateFormatters(formatters) {
+		if (isObject(formatters)) {
+			return formatters
+		}
+		return {}
 	}
 
-	/**
-	 * Makes pubsub.unsubscribe available to appenders
-	 * @param token
-	 * @returns {boolean}
-	 */
-	unsubscribe(token) {
-		return this.pubsub.unsubscribe(token);
+	static validateLevel(name, logLevel) {
+		if (isNumeric(logLevel)) {
+			return logLevel
+		}
+		console.log(`Invalid logging level for "${name}". Defaulting to "ERROR".`)
+		return Level.ERROR;
+	}
+
+	static validateGlobals(globals) {
+		if(typeof globals === 'undefined') {
+			return {}
+		}
+
+		if(isObject(globals)) {
+			return globals
+		}
+
+		console.log('Invalid global configurations. Must be a non-empty object.')
+		return {};
+	}
+
+	static createEmitters(level) {
+		return function() {
+			if(this.level <= level) {
+				this.log(level, cloneDeep(arguments))
+			}
+		}
+	}
+
+	applyFormatters(event) {
+		if(!this.formatters || this.formatters.length < 1) {
+			return;
+		}
+		Object.keys(this.formatters).forEach(name => {
+			if(!event[name]) {
+				return;
+			}
+			try {
+				event[name] = this.formatters[name](event[name])
+			} catch(err) {
+				console.warn('There was an error applying a log formatter.', err)
+			}
+		})
 	}
 
 	/**
 	 * main log method logging to all available appenders
-	 * @private
 	 */
-	log(logLevel, message, exception) {
-		const loggingEvent = new LoggingEvent(
-			this.name,
-			Level.toString(logLevel),
-			message,
-			exception
-		);
+	log(minLevel, args) {
+		const loggingEvent = new LoggingEvent(this.name, Level.toString(minLevel));
 
-		Object.assign(loggingEvent, loggingEvent, this.globals);
-
-		this.pubsub.publish('log', loggingEvent);
-	}
-
-	/** clear logging */
-	clear() {
-		try {
-			this.loggingEvents = [];
-			this.dispatcher.dispatch('clear');
-		} catch (e) {
-			console.log(e);
+		if (args[0] instanceof Error) {
+			loggingEvent.exception = formatError(args[0])
+			loggingEvent.message = loggingEvent.exception.message
+		} else if(isString(args[0])) {
+			loggingEvent.message = args[0]
+			if(args[1] instanceof Error) {
+				loggingEvent.exception = formatError(args[1])
+			}
+		} else if(isObject(args[0]) && !(args[0] instanceof Error)) {
+			Object.assign(loggingEvent, args[0])
 		}
-	}
 
-	/** checks if Level Trace is enabled */
-	isTraceEnabled() {
-		if (this.level <= Level.TRACE) {
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Trace messages
-	 * @param message {Object} message to be logged
-	 */
-	trace(message) {
-		if (this.isTraceEnabled()) {
-			this.log(Level.TRACE, message, null);
-		}
-	}
-
-	/** checks if Level Debug is enabled */
-	isDebugEnabled() {
-		if (this.level <= Level.DEBUG) {
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Debug messages
-	 * @param {Object} message  message to be logged
-	 * @param {Throwable} throwable
-	 */
-	debug(message, throwable) {
-		if (this.isDebugEnabled()) {
-			this.log(Level.DEBUG, message, throwable);
-		}
-	}
-
-	/** checks if Level Info is enabled */
-	isInfoEnabled() {
-		if (this.level <= Level.INFO) {
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * logging info messages
-	 * @param {Object} message  message to be logged
-	 * @param {Throwable} throwable
-	 */
-	info(message, throwable) {
-		if (this.isInfoEnabled()) {
-			this.log(Level.INFO, message, throwable);
-		}
-	}
-
-	/** checks if Level Warn is enabled */
-	isWarnEnabled() {
-		if (this.level <= Level.WARN) {
-			return true;
-		}
-		return false;
-	}
-
-	/** logging warn messages */
-	warn(message, throwable) {
-		if (this.isWarnEnabled()) {
-			this.log(Level.WARN, message, throwable);
-		}
-	}
-
-	/** checks if Level Error is enabled */
-	isErrorEnabled() {
-		if (this.level <= Level.ERROR) {
-			return true;
-		}
-		return false;
-	}
-
-	/** logging error messages */
-	error(message, throwable) {
-		if (this.isErrorEnabled()) {
-			this.log(Level.ERROR, message, throwable);
-		}
-	}
-
-	/** checks if Level Fatal is enabled */
-	isFatalEnabled() {
-		if (this.level <= Level.FATAL) {
-			return true;
-		}
-		return false;
-	}
-
-	/** logging fatal messages */
-	fatal(message, throwable) {
-		if (this.isFatalEnabled()) {
-			this.log(Level.FATAL, message, throwable);
-		}
-	}
-
-	/**
-	 * Set the Loglevel default is LogLEvel.TRACE
-	 * @param level wanted logging level
-	 */
-	setLevel(level) {
-		this.level = level;
-	}
-
-	/**
-	 * Set the date format of logger. Following switches are supported:
-	 * <ul>
-	 * <li>yyyy - The year</li>
-	 * <li>MM - the month</li>
-	 * <li>dd - the day of month<li>
-	 * <li>hh - the hour<li>
-	 * <li>mm - minutes</li>
-	 * <li>O - timezone offset</li>
-	 * </ul>
-	 * @param {String} format format String for the date
-	 * @see {@getTimestamp}
-	 */
-	setDateFormat(format) {
-		this.dateformat = format;
-	}
-
-	/**
-	 * Generates a timestamp using the format set in {Log4js.DateFormatter.formatDate}.
-	 * @param {Date} date the date to format
-	 * @see {@setDateFormat}
-	 * @return {String} A formatted timestamp with the current date and time.
-	 */
-	getFormattedTimestamp(date) {
-		return formatDate(date, this.dateformat);
+		this.applyFormatters(loggingEvent)
+		this.callback(loggingEvent)
 	}
 }

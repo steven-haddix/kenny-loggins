@@ -1,55 +1,59 @@
-/**
- * Class for managing managing task queues.
- *
- * Queues can be flushed 1 of 2 ways:
- * - Queue Length > Threshold
- * - Timeout Interval Expires
- */
+import { queue } from './defaults'
+import {
+    initializeQueue,
+    isFunction,
+    validateQueueSize,
+    validateQueueInterval
+} from './helpers'
+
 export default class Queue {
-    constructor(interval = 30000, threshold = 1, flushHandler = {}, queue = []) {
-        this.queue = queue;
-        this.threshold = threshold;
-        this.interval = interval;
-        this.flushHandler = flushHandler;
-        this.timer = this.startTimer(interval);
+    constructor(config = {}) {
+        this.configure(config)
+        this.queueTimer = null;
+        this.startQueueTimer();
     }
 
-    add(items) {
-        this.queue.push(items);
-        this.attemptFlush(this.threshold);
+    configure(config) {
+        const newConfig = {
+            queueSize: validateQueueSize(config.queueSize, queue.queueSize),
+            queueInterval: validateQueueInterval(config.queueInterval, queue.queueInterval)
+        };
+
+        this.queue = initializeQueue(config.queueType);
+        Object.assign(this, newConfig)
     }
 
-    /**
-     * Not sure this is needed
-     * @returns {T}
-     */
-    shift() {
-        return this.queue.shift();
+    startQueueTimer() {
+        if(!this.queueInterval) {
+            return;
+        }
+
+        if(this.queueTimer !== null) {
+            clearTimeout(this.queueTimer)
+        }
+
+        this.queueTimer = setTimeout(() => this.drainQueue(), this.queueInterval);
     }
 
-    clear() {
-        this.queue = [];
-        return this;
+    addToQueue(event) {
+        this.queue.push(event)
+        this.checkQueue()
     }
 
-    attemptFlush(threshold) {
-        if (this.queue.length >= threshold) {
-            this.flush();
-            this.resetTimer();
+    checkQueue() {
+        if(this.queue.length >= this.queueSize) {
+            this.drainQueue()
+            this.startQueueTimer()
         }
     }
 
-    // FIXME: need to determine how to implement execution.
-    flush() {
-        return this.flushHandler(this.queue);
+    setDrainCallback(callback) {
+        this.drainCallback = callback;
     }
 
-    startTimer(interval) {
-        return setInterval(() => this.attemptFlush(1), interval);
-    }
-
-    resetTimer() {
-        clearInterval(this.timer);
-        this.timer = this.startTimer(this.interval);
+    drainQueue() {
+        if(this.queue.length > 0 && isFunction(this.drainCallback)) {
+            this.drainCallback(this.queue.splice(0, this.queue.length))
+        }
     }
 }

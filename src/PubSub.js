@@ -1,4 +1,4 @@
-import Helper from './helpers/helper';
+import { hasKeys } from './helpers';
 
 export default class PubSub {
     constructor() {
@@ -73,6 +73,6 @@ export default class PubSub {
     }
 
     messageHasSubscribers(message) {
-        return Helper.hasKeys(this.messages[message]);
+        return hasKeys(this.messages[message]);
     }
 }

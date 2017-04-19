@@ -1,29 +1,32 @@
+import PubSub from './PubSub'
 import Logger from './Logger';
+import {
+	isRegexMatch,
+	isObject,
+	isFunction,
+	isString,
+	safetyWrapper
+} from './helpers'
 
 export default class KennyLoggins {
 	constructor(debugMode = false) {
-		/**
-		 * Whether to run debug mode
-		 * @type {boolean}
-         */
+
 		this.debugMode = debugMode;
 
-		/**
-		 * Date of logger initialized.
-		 * @static
-		 * @final
-		 */
-		this.applicationStartDate = new Date();
+		this.pubsub = new PubSub();
 
-		/**
-		 * Array of loggers.
-		 * @static
-		 * @final
-		 * @private
-		 */
 		this.loggers = [];
 
+		this.formatters = {};
+
 		this.configs = [];
+
+		this.globals = {};
+
+		this.defaultLogger = Logger.createLogger({
+			name: 'default',
+			callback: () => {}
+		})
 	}
 
 	/**
@@ -37,7 +40,7 @@ export default class KennyLoggins {
 	 * 		appenders: [new ConsoleAppender(), new AjaxAppender()]
 	 * 	},
 	 * 	{
-	 * 		pattern: '^common'
+	 * 		name: '^common'
 	 * 		appenders: [new ConsoleAppender()]
 	 * }]
 	 *
@@ -49,24 +52,78 @@ export default class KennyLoggins {
 			return this;
 		}
 
-		if(config.appenders && Array.isArray(config.appenders)) {
-			config.appenders.forEach((appenderConfig) => {
-				try {
-					appenderConfig['globals'] = config.globals ? config.globals : {};
-					this.configs.push(appenderConfig);
-				} catch (ex) {
-					// continue regardless of error
-				}
-			});
-		}
+		this.setFormatters(config.formatters)
 
+		this.setGlobals(config.globals)
+
+		if(config.loggers) {
+			this.setLoggerConfigs(config.loggers)
+		} else if(config.appenders) {
+			console.log('The .configure({ appenders: [] }) syntax is now deprecated. Please switch to .configure({ loggers: [] }) in the future.')
+			this.setLoggerConfigs(config.appenders)
+		}
 		return this;
 	}
 
+	setFormatters(formatters) {
+		if(!Array.isArray(formatters)) {
+			return;
+		}
+
+		formatters.forEach(formatter => {
+			const name = isString(formatter.name) || '[ UNKNOWN ]'
+			if(isObject(formatter) && isString(formatter.name) && isFunction(formatter.format)) {
+				this.formatters[formatter.name] = formatter.format;
+			} else {
+				console.warn(`Invalid formatter configuration for formatter ${name}. Expecting: "{ name: [field name], format: [format function] }".`)
+			}
+		})
+	}
+
+	setLoggerConfigs(configs) {
+		if(!Array.isArray(configs)) {
+			return;
+		}
+		configs.forEach(config => {
+			if(config.name) {
+				this.configs.push(config)
+			} else {
+				console.warn('Invalid logger configuration name found. This configuration will be ignored.', config)
+			}
+		})
+	}
+
+	setGlobals(globals) {
+		if(!globals) {
+			return;
+		}
+
+		this.globals = globals
+	}
+
 	/**
-	 * Get a logger instance. Instance is cached on categoryName level.
-	 * @param  {String} name of logger to return.
-	 * @return {Logger} instance of logger for the category
+	 * Loops through array of appenders, subscribes them to the logger
+	 * @param {string} logger - Name of logger to set appenders to listen
+	 * @param {Object} appenders - Object that contains an array of appenders
+	 * @returns {KennyLoggins} returns self to allow for chaining
+	 */
+	configureAppenders(logger, appenders) {
+		if (!Array.isArray(appenders)) {
+			return this
+		}
+
+		appenders.forEach((appender) => {
+			if (typeof appender === 'object' && typeof appender.onLogEventHandler === 'function') {
+				this.pubsub.subscribe(logger, (logger, event) => appender.onLogEventHandler(logger, event))
+			}
+		});
+	}
+
+	/**
+	 * Get a logger instance if it exists or create a new one.
+	 * Returns a default logger if no configuration is found.
+	 * @param  {String} name of logger config to use.
+	 * @return {Logger} instance of a logger
 	 */
 	getLogger(name) {
 		try {
@@ -79,52 +136,51 @@ export default class KennyLoggins {
 			const config = this.getLoggerConfig(name);
 
 			if(config) {
-				return this.createLogger(name, config);
+				return this.createLogger(Object.assign(config, { name }));
 			}
 
+			return this.defaultLogger;
+		} catch (err) {
+			console.log(err)
 			return this.getDefaultLogger();
-		} catch (ex) {
-			// continue regardless of error
 		}
 	}
 
 	/**
 	 * Function for creating new loggers. Adds new logger to list of logger instances.
-	 * @param {string} name
 	 * @param {object} config
  	 * @returns {Logger}
      */
-	createLogger(name, config) {
-		const logger = new Logger(name).configure(config);
+	createLogger(config) {
+		config.callback = (param) => this.pubsub.publish(config.name, param)
+
+		const logger = Logger.createLogger(Object.assign(config, { formatters: this.formatters }))
+		this.configureAppenders(config.name, config.appenders);
 
 		if (!this.debugMode) {
-			this.productionize(logger);
+			// FIXME: this is messing with logger callback scoping when enabled
+			// safetyWrapper(logger);
 		}
 
-		this.loggers.push({
-			name,
-			logger
-		});
+		this.loggers.push({ name: config.name, logger });
 
 		return logger;
 	}
 
 	getDefaultLogger() {
-		const defaultLogger = this.getLoggerByName('default');
-
-		if (defaultLogger) {
-			return defaultLogger.logger;
-		}
-
-		return this.createLogger('default');
+		return this.getLoggerByName('default');
 	}
 
 	getLoggerConfig(name) {
 		let isFound = false;
 		let config;
 
+		if(this.configs.length === 0 || !name) {
+			return config
+		}
+
 		this.configs.forEach((c) => {
-			if (!isFound && this.regex(c.name, name)) {
+			if (!isFound && isRegexMatch(c.name, name)) {
 				isFound = true;
 				config = c;
 			}
@@ -143,37 +199,5 @@ export default class KennyLoggins {
 		});
 
 		return logger;
-	}
-
-	productionize(object) {
-		let name;
-		let method;
-
-		const wrapper = function wrapper(n, m) {
-			return () => {
-				try {
-					return m.apply(this, arguments);
-				} catch (ex) {
-					// continue regardless of error
-				}
-			};
-		};
-
-		for (name in object) {
-			if (object.hasOwnProperty(name)) {
-				method = object[name];
-				if (typeof method === 'function') {
-					object[name] = wrapper(name, method);
-				}
-			}
-		}
-	}
-
-	regex(regx, str) {
-		if (new RegExp(regx).exec(str)) {
-			return true;
-		}
-
-		return false;
 	}
 }

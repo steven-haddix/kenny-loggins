@@ -1,34 +1,53 @@
 import test from 'tape'
 import sinon from 'sinon'
+import { isFunction } from '../src/helpers'
 import BaseAppender from '../src/BaseAppender'
 
-test('Base appender', (t) => {
-    const baseAppender = new BaseAppender({ bufferSize: 10 })
-    t.deepEqual(baseAppender.buffer, [], 'should create empty buffer')
-    t.equal(baseAppender.bufferSize, 10, 'should allow default overrides')
+test('BaseAppender prototype', (t) => {
+    const baseAppender = new BaseAppender({ queueInterval: 0 });
+    t.equal(isFunction(baseAppender.onLogEventHandler), true, 'should implement an apply function')
     t.end()
 })
 
-test('Base appender buffer timer', (t) => {
-    const baseAppender = new BaseAppender({ bufferTimeout: 1000 })
-    const drainBufferSpy = sinon.spy(baseAppender, 'drainBuffer')
 
-    setTimeout(() => {
-        t.equal(drainBufferSpy.called, true, 'should call buffer timeout after set timeout')
-        t.end()
-    }, 2000)
+test('BaseAppender queuing', (t) => {
+    const baseAppender = new BaseAppender({ queueSize: 4, queueInterval: 0 });
+
+    const appendSpy = sinon.spy(baseAppender, 'append')
+
+    baseAppender.onLogEventHandler(null, { test1: 'test1' })
+    baseAppender.onLogEventHandler(null, { test1: 'test1' })
+    baseAppender.onLogEventHandler(null, { test1: 'test1' })
+    t.equal(baseAppender.queue.queue.length, 3, 'should increment queue when apply is called')
+
+    baseAppender.onLogEventHandler(null, { test1: 'test1' })
+    t.equal(appendSpy.called, true, 'should call release function when threshold is met')
+
+    t.end()
 })
 
-test('Base appender buffer count', (t) => {
-    const baseAppender = new BaseAppender({ bufferSize: 3 })
-    const drainBufferSpy = sinon.spy(baseAppender, 'drainBuffer')
-    const doAppendSpy = sinon.spy(baseAppender, 'doAppend')
+test('BaseAppender session storage implementation', (t) => {
+    const mockSessionStorage = {
+        logging: JSON.stringify([ 'test0' ])
+    }
 
-    baseAppender.addToBuffer('item 1')
-    baseAppender.addToBuffer('item 2')
-    baseAppender.addToBuffer('item 3')
+    global.window = {}
+    global.sessionStorage = {
+        setItem: (key, value) => mockSessionStorage[key] = value,
+        getItem: (key) => mockSessionStorage[key]
+    }
 
-    t.deepEqual(doAppendSpy.getCalls()[0].args[0], ['item 1', 'item 2', 'item 3'], 'should call doAppend with buffer items if threshold is reached')
-    t.equal(drainBufferSpy.called, true, 'should drain buffer when threshold is reached')
+    const baseAppender = new BaseAppender({ queueType: 'persistent-session', queueSize: 5, queueInterval: 0 });
+    const appendSpy = sinon.spy(baseAppender, 'append')
+
+    baseAppender.onLogEventHandler(null, 'test1')
+    baseAppender.onLogEventHandler(null, 'test2')
+    baseAppender.onLogEventHandler(null, 'test3')
+    t.equal(baseAppender.queue.queue[0], 'test0', 'should inherit initial state')
+    t.equal(baseAppender.queue.queue.length, 4, 'should increment queue when apply is called')
+
+    baseAppender.onLogEventHandler(null, 'test4')
+    t.equal(appendSpy.called, true, 'should call release function when threshold is met')
+
     t.end()
 })

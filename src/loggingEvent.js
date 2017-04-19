@@ -1,14 +1,11 @@
 /**
  * Models a logging event.
  * @constructor
- * @param {String} loggerName name of logger
- * @param {Level} level level of message
- * @param {String} message message to log
- * @param {Logger} logger the associated logger
- * @param {String} exception to log
+ * @param {String} name - name of logger
+ * @param {Level} level - level of message (INFO, ERROR...)
  */
 export default class LoggingEvent {
-	constructor(loggerName, level, message, exception) {
+	constructor(name, level) {
 		/**
 		 * the timestamp of the Logging Event
 		 * @type Date
@@ -20,24 +17,12 @@ export default class LoggingEvent {
 		 * @type String
 		 * @private
 		 */
-		this.loggerName = loggerName;
+		this.name = name;
 		/**
 		 * level of log
 		 * @type Level
 		 * @private
 		 */
-		this.logLevel = level;
-		/**
-		 * the logging message
-		 * @type String
-		 * @private
-		 */
-		this.logMessage = message;
-		/**
-		 * the logging exception
-		 * @type String
-		 * @private
-		 */
-		this.exception = exception;
+		this.level = level;
 	}
 }
