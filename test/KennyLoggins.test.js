@@ -2,7 +2,7 @@ import test from 'tape'
 import sinon from 'sinon'
 import KennyLoggins from '../src/KennyLoggins'
 import BaseAppender from '../src/BaseAppender'
-import { Level } from '../src/Level'
+import { Level } from '../src/level'
 import { isFunction } from '../src/helpers'
 import { getArgs } from './testHelpers'
 
