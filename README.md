@@ -65,7 +65,7 @@ KennyLoggins
                 appenders: [consoleAppender, ajaxAppender], // Optional
             },
             { // Will match second,
-                pattern: '^common',
+                name: '^common',
                 appenders: [new consoleAppender()],
                 level: Level.INFO
             }
