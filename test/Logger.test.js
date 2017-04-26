@@ -6,7 +6,7 @@ import BaseAppender from '../src/BaseAppender';
 import { Level } from '../src/level';
 import { isFunction } from '../src/helpers'
 
-test.only('Logger creation', (t) => {
+test('Logger creation', (t) => {
   const callbackSpy = sinon.spy();
   const logger = Logger.createLogger({
     name: 'test',
