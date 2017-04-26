@@ -156,7 +156,7 @@ export default class KennyLoggins {
 	createLogger(config) {
 		config.callback = (param) => this.pubsub.publish(config.name, param)
 
-		const logger = Logger.createLogger(Object.assign(config, { formatters: this.formatters }))
+		const logger = Logger.createLogger(Object.assign(config, { formatters: this.formatters, globals: this.globals }))
 		this.configureAppenders(config.name, config.appenders);
 
 		if (!this.debugMode) {

@@ -6,12 +6,13 @@ import BaseAppender from '../src/BaseAppender';
 import { Level } from '../src/level';
 import { isFunction } from '../src/helpers'
 
-test('Logger creation', (t) => {
+test.only('Logger creation', (t) => {
   const callbackSpy = sinon.spy();
   const logger = Logger.createLogger({
     name: 'test',
     level: Level.INFO,
     callback: callbackSpy,
+    globals: { app: 'test.wendys.com' },
     formatters: { formatField: (msg) => msg + ' format'}
   })
 
@@ -26,6 +27,7 @@ test('Logger creation', (t) => {
 
   t.equal(callbackSpy.called, true, 'should call logger callback on log event')
   t.equal(callbackSpy.getCall(0).args[0].message, 'test', 'should call logger callback with string message')
+  t.equal(callbackSpy.getCall(0).args[0].app, 'test.wendys.com', 'should merge globals into log event')
 
   logger.info(new Error('test'))
   t.equal(callbackSpy.getCall(1).args[0].exception.message, 'test', 'should handle first parameter being an exception')
