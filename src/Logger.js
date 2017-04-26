@@ -114,6 +114,7 @@ export default class Logger {
 		}
 
 		this.applyFormatters(loggingEvent)
+		Object.assign(loggingEvent, this.globals)
 		this.callback(loggingEvent)
 	}
 }
