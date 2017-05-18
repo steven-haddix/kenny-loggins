@@ -1,3 +1,4 @@
+import cloneDeep from 'lodash.clonedeep';
 import PubSub from './PubSub'
 import Logger from './Logger';
 import { Level } from './level';
@@ -178,13 +179,13 @@ export default class KennyLoggins {
 		let config;
 
 		if(this.configs.length === 0 || !name) {
-			return config
+			return config;
 		}
 
 		this.configs.forEach((c) => {
 			if (!isFound && isRegexMatch(c.name, name)) {
 				isFound = true;
-				config = c;
+				config = cloneDeep(c);
 			}
 		});
 
