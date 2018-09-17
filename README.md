@@ -16,8 +16,9 @@ that supports Kenny Loggins (project B), without requiring project A to have any
 
 
 ## Installation
-### Prerequisites
-***
+```
+NPM package coming soon
+```
 
 ## Exposed API Objects
 ```
