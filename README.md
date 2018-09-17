@@ -17,19 +17,6 @@ that supports Kenny Loggins (project B), without requiring project A to have any
 
 ## Installation
 ### Prerequisites
-#### Configuring Nexus
-Point NPM to the nexus server using the following console commands:
-```bash
-$ npm config set strict-ssl false
-$ npm config set registry https://nexus/repository/npm-all/
-```
-
-### NPM Pacakge
-Install Kenny Loggins into your project via npm.
-```sh
-$ npm i -S wendys-kenny-loggins
-```
-
 ***
 
 ## Exposed API Objects
@@ -48,13 +35,13 @@ Primary logging instance that holds, fetches and creates loggers based on config
 - **This should be earlier in application load. No loggers will be available until after configure is ran**
 - Logger configuration order matters, as priority is top to bottom.
 - Only the first matching appender will be applied. 
-    - Names can use wildcards ('common.service.*')
+    - Names can use wildcards ('service.*')
     - Appender patterns are regex patterns.
 - Level dictates the minimum log threshold for the appender to output a message.
 - **globals** are attributes that get applied to every appender message.
 
 ```javascript
-import { KennyLoggins, Level } from 'wendys-kenny-loggins'
+import { KennyLoggins, Level } from 'kenny-loggins'
 
 KennyLoggins
     .configure({
@@ -88,7 +75,7 @@ KennyLoggins
 ### getLogger
 Returns a new or already created instance of a logger. See "Logger API" for information on logger instances.
 ```
-import { KennyLoggins, Level } from 'wendys-kenny-loggins'
+import { KennyLoggins, Level } from 'kenny-loggins'
 const logger = KennyLoggins.getLogger('common_web.serviceClients.menuClient')
 ```
 
